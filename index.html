@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#6b2433" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#1a0c10" media="(prefers-color-scheme: dark)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Undangan Pernikahan — Supriyadi &amp; Hayu Kartikasari</title>
+  <meta name="description" content="Undangan pernikahan Supriyadi & Hayu Kartikasari. Minggu, 24 Mei 2026." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__orb aurora__orb--1"></span>
+    <span class="aurora__orb aurora__orb--2"></span>
+    <span class="aurora__orb aurora__orb--3"></span>
+  </div>
+
+  <!-- Layar pembuka -->
+  <div class="gate" id="gate" aria-hidden="false">
+    <div class="gate__panel glass glass--strong">
+      <div class="gate__inner">
+        <figure class="gate__portrait anim-text-in">
+          <img
+            class="gate__photo js-photo"
+            src="images/couple-hero.jpg"
+            width="280"
+            height="280"
+            alt="Supriyadi dan Hayu Kartikasari"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </figure>
+        <p class="gate__mono anim-text-in" id="gateGuest" hidden></p>
+        <p class="gate__kicker anim-text-in">The Wedding of</p>
+        <h1 class="gate__names anim-text-in">Supriyadi <span class="gate__amp">&amp;</span> Hayu</h1>
+        <p class="gate__subtitle anim-text-in">Hayu Kartikasari</p>
+        <p class="gate__date anim-text-in">Minggu, 24 Mei 2026 · WIB</p>
+        <button type="button" class="gate__btn anim-text-in" id="openGate">
+          <span>Buka Undangan</span>
+        </button>
+      </div>
+    </div>
+    <div class="gate__noise" aria-hidden="true"></div>
+  </div>
+
+  <main class="main" id="mainContent" hidden>
+    <header class="hero" id="beranda">
+      <div class="hero__content glass glass--hero">
+        <figure class="hero__figure anim-text-in">
+          <img
+            class="hero__photo js-photo"
+            src="images/couple-hero.jpg"
+            width="1200"
+            height="1500"
+            sizes="(max-width: 520px) 92vw, 420px"
+            alt="Momen bahagia Supriyadi dan Hayu Kartikasari"
+            loading="eager"
+            decoding="async"
+            fetchpriority="high"
+          />
+        </figure>
+        <p class="hero__guest glass-pill-text anim-text-in" id="heroGuest" hidden></p>
+        <p class="eyebrow anim-text-in">Undangan Pernikahan</p>
+        <h1 class="hero__title anim-text-in">Supriyadi <span class="hero__amp">&amp;</span> Hayu Kartikasari</h1>
+        <p class="hero__subtitle anim-text-in">Kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan kami</p>
+        <div class="hero__ornament anim-text-in" aria-hidden="true">◇</div>
+      </div>
+    </header>
+
+    <section class="section section--quote">
+      <blockquote class="quote glass">
+        <p class="anim-on-scroll">“Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya.”</p>
+        <cite class="anim-on-scroll anim-on-scroll--delay">QS. Ar-Rum: 21</cite>
+      </blockquote>
+    </section>
+
+    <section class="section section--gallery" id="galeri" aria-labelledby="galeri-title">
+      <h2 class="section__title anim-on-scroll" id="galeri-title">Galeri</h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Beberapa momen kami — terima kasih telah menjadi bagian dari cerita ini.</p>
+      <div class="gallery">
+        <button type="button" class="gallery__tile glass anim-on-scroll js-lightbox-trigger" aria-label="Perbesar foto galeri 1">
+          <img class="gallery__img js-photo" src="images/gallery-01.jpg" width="800" height="1000" alt="Foto prewedding 1" loading="lazy" decoding="async" />
+        </button>
+        <button type="button" class="gallery__tile glass anim-on-scroll js-lightbox-trigger" aria-label="Perbesar foto galeri 2">
+          <img class="gallery__img js-photo" src="images/gallery-02.jpg" width="800" height="1000" alt="Foto prewedding 2" loading="lazy" decoding="async" />
+        </button>
+        <button type="button" class="gallery__tile glass anim-on-scroll js-lightbox-trigger" aria-label="Perbesar foto galeri 3">
+          <img class="gallery__img js-photo" src="images/gallery-03.jpg" width="800" height="1000" alt="Foto prewedding 3" loading="lazy" decoding="async" />
+        </button>
+        <button type="button" class="gallery__tile glass anim-on-scroll js-lightbox-trigger" aria-label="Perbesar foto galeri 4">
+          <img class="gallery__img js-photo" src="images/gallery-04.jpg" width="800" height="1000" alt="Foto prewedding 4" loading="lazy" decoding="async" />
+        </button>
+      </div>
+    </section>
+
+    <section class="section" id="mempelai">
+      <h2 class="section__title anim-on-scroll">Mempelai</h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Dengan memohon rahmat dan ridho Allah SWT, kami menyatukan hati dalam ikatan suci pernikahan.</p>
+      <div class="couple">
+        <article class="person glass anim-on-scroll">
+          <p class="person__label">Mempelai Pria</p>
+          <h3 class="person__name">Supriyadi</h3>
+          <p class="person__parents">Putra dari Bapak &amp; Ibu<br /><span class="person__hint">silakan lengkapi nama orang tua</span></p>
+        </article>
+        <div class="couple__and glass-pill anim-on-scroll" aria-hidden="true">&amp;</div>
+        <article class="person glass anim-on-scroll">
+          <p class="person__label">Mempelai Wanita</p>
+          <h3 class="person__name">Hayu Kartikasari</h3>
+          <p class="person__parents">Putri dari Bapak &amp; Ibu<br /><span class="person__hint">silakan lengkapi nama orang tua</span></p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section section--count" id="acara">
+      <h2 class="section__title anim-on-scroll">Hari Bahagia</h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Menuju momen yang kami nantikan — <strong>Minggu, 24 Mei 2026</strong></p>
+      <div class="countdown glass glass--pad" id="countdown" data-date="2026-05-24T09:00:00+07:00">
+        <div class="countdown__box"><span class="countdown__num" id="cdDays">00</span><span class="countdown__lab">Hari</span></div>
+        <div class="countdown__box"><span class="countdown__num" id="cdHours">00</span><span class="countdown__lab">Jam</span></div>
+        <div class="countdown__box"><span class="countdown__num" id="cdMins">00</span><span class="countdown__lab">Menit</span></div>
+        <div class="countdown__box"><span class="countdown__num" id="cdSecs">00</span><span class="countdown__lab">Detik</span></div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section__title anim-on-scroll">Rangkaian Acara</h2>
+      <div class="events">
+        <article class="event glass anim-on-scroll">
+          <span class="event__badge">Akad Nikah</span>
+          <time class="event__time" datetime="2026-05-24T09:00">09.00 WIB</time>
+          <p class="event__place">Nama &amp; alamat lokasi akad<br /><span class="event__note">Edit teks ini di index.html</span></p>
+        </article>
+        <article class="event glass anim-on-scroll">
+          <span class="event__badge">Resepsi</span>
+          <time class="event__time" datetime="2026-05-24T11:00">11.00 – selesai WIB</time>
+          <p class="event__place">Nama &amp; alamat resepsi<br /><span class="event__note">Sesuaikan tautan Google Maps di index.html</span></p>
+        </article>
+      </div>
+      <a class="btn-map glass-btn anim-on-scroll" href="https://maps.google.com/" target="_blank" rel="noopener noreferrer">Buka di Google Maps</a>
+    </section>
+
+    <section class="section section--muted">
+      <div class="glass glass--muted anim-on-scroll">
+        <h2 class="section__title section__title--in-card">Dress Code</h2>
+        <p class="section__lead section__lead--in-card">Kehadiran Anda adalah hadiah terindah. Mohon berpakaian <strong>formal / busana adat</strong> dengan nuansa <em>maroon, ivory &amp; emas rose</em>.</p>
+      </div>
+    </section>
+
+    <section class="section" id="rsvp">
+      <h2 class="section__title anim-on-scroll">Konfirmasi Kehadiran</h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Mohon konfirmasi paling lambat <strong>10 Mei 2026</strong> agar kami dapat menyiapkan hidangan dengan baik.</p>
+      <form class="rsvp-form glass glass--form" id="rsvpForm">
+        <label class="field">
+          <span>Nama</span>
+          <input type="text" name="name" required placeholder="Nama lengkap" autocomplete="name" />
+        </label>
+        <label class="field">
+          <span>Jumlah tamu</span>
+          <input type="number" name="guests" min="1" max="10" value="1" required />
+        </label>
+        <fieldset class="field field--radio">
+          <legend>Konfirmasi</legend>
+          <label><input type="radio" name="attend" value="hadir" checked /> Hadir</label>
+          <label><input type="radio" name="attend" value="tidak" /> Tidak bisa hadir</label>
+        </fieldset>
+        <label class="field">
+          <span>Ucapan (opsional)</span>
+          <textarea name="message" rows="3" placeholder="Doa atau ucapan untuk mempelai"></textarea>
+        </label>
+        <button type="submit" class="submit-btn"><span>Kirim via WhatsApp</span></button>
+      </form>
+    </section>
+
+    <section class="section section--gift">
+      <h2 class="section__title anim-on-scroll">Amplop Digital</h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Bagi yang berkenan memberikan tanda kasih, dapat ditransfer ke rekening berikut:</p>
+      <div class="gift-cards">
+        <div class="gift-card glass anim-on-scroll">
+          <p class="gift-card__bank">Bank</p>
+          <p class="gift-card__num" data-copy="0000000000">0000000000</p>
+          <p class="gift-card__name">a.n. Supriyadi</p>
+          <button type="button" class="copy-btn" data-target="0000000000">Salin nomor rekening</button>
+        </div>
+        <div class="gift-card glass anim-on-scroll">
+          <p class="gift-card__bank">Bank</p>
+          <p class="gift-card__num" data-copy="0000000000">0000000000</p>
+          <p class="gift-card__name">a.n. Hayu Kartikasari</p>
+          <button type="button" class="copy-btn" data-target="0000000000">Salin nomor rekening</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer__inner glass glass--footer anim-on-scroll">
+        <p class="footer__thanks">Terima kasih atas doa dan restunya.</p>
+        <p class="footer__sign">Supriyadi &amp; Hayu Kartikasari</p>
+      </div>
+      <button type="button" class="to-top glass-icon" id="toTop" aria-label="Kembali ke atas">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"/></svg>
+      </button>
+    </footer>
+  </main>
+
+  <nav class="ios-dock" id="iosDock" aria-label="Navigasi cepat" hidden>
+    <div class="ios-dock__inner glass-dock">
+      <a class="ios-dock__item" href="#beranda" data-section="beranda"><span class="ios-dock__ico" aria-hidden="true">◇</span><span>Beranda</span></a>
+      <a class="ios-dock__item" href="#galeri" data-section="galeri"><span class="ios-dock__ico" aria-hidden="true">▢</span><span>Galeri</span></a>
+      <a class="ios-dock__item" href="#mempelai" data-section="mempelai"><span class="ios-dock__ico" aria-hidden="true">♡</span><span>Mempelai</span></a>
+      <a class="ios-dock__item" href="#acara" data-section="acara"><span class="ios-dock__ico" aria-hidden="true">◎</span><span>Acara</span></a>
+      <a class="ios-dock__item" href="#rsvp" data-section="rsvp"><span class="ios-dock__ico" aria-hidden="true">✎</span><span>RSVP</span></a>
+    </div>
+  </nav>
+
+  <dialog class="lightbox" id="photoLightbox" aria-labelledby="lightbox-title">
+    <h2 class="visually-hidden" id="lightbox-title">Foto diperbesar</h2>
+    <button type="button" class="lightbox__close" id="lightboxClose" aria-label="Tutup">&times;</button>
+    <img class="lightbox__img" id="lightboxImg" alt="" src="" width="1200" height="1500" />
+  </dialog>
+
+  <div class="toast glass-toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="script.js" defer></script>
+</body>
+</html>
