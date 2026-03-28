@@ -291,7 +291,7 @@
   }
 
   /* Ganti nomor WhatsApp di bawah sebelum dipakai */
-  const WA_NUMBER = "6281234567890";
+  const WA_NUMBER = "6287710549498";
   if (rsvpForm) {
     rsvpForm.addEventListener("submit", function (e) {
       e.preventDefault();
