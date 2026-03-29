@@ -113,7 +113,6 @@ body {
   pointer-events: none;
   contain: strict;
   background:
-    radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.95) 120%),
     radial-gradient(ellipse 120% 80% at 50% -20%, rgba(196, 102, 117, 0.32), transparent 50%),
     radial-gradient(ellipse 90% 70% at 100% 50%, rgba(235, 200, 206, 0.5), transparent 45%),
     radial-gradient(ellipse 80% 60% at 0% 80%, rgba(107, 36, 51, 0.18), transparent 50%),
@@ -273,7 +272,6 @@ body {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(circle at center, transparent 20%, rgba(0, 0, 0, 0.95) 120%),
     linear-gradient(rgba(26, 12, 16, 0.45), rgba(26, 12, 16, 0.45)),
     url('images/bacground-opening.jpg') center 40%/cover no-repeat;
 }
@@ -295,41 +293,6 @@ body {
   color: var(--ink);
 }
 
-.gate__panel::after {
-  content: "";
-  position: absolute;
-  inset: -1px;
-  border-radius: calc(var(--radius-lg) + 1px);
-  background: linear-gradient(90deg,
-      rgba(255, 255, 255, 0),
-      #ff2a5f,
-      #4a00e0,
-      #00d2ff,
-      rgba(255, 255, 255, 0),
-      #ff2a5f,
-      #4a00e0,
-      #00d2ff,
-      rgba(255, 255, 255, 0));
-  background-size: 200% 100%;
-  animation: siri-border 3s infinite linear;
-  z-index: 5;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  padding: 3px;
-  pointer-events: none;
-}
-
-@keyframes siri-border {
-  0% {
-    background-position: 0% 0%;
-  }
-
-  100% {
-    background-position: -100% 0%;
-  }
-}
 
 .gate__panel::before {
   content: "";
