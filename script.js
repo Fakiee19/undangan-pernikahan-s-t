@@ -10,6 +10,10 @@
   const heroGuest = document.getElementById("heroGuest");
   const iosDock = document.getElementById("iosDock");
 
+  const bgMusic = document.getElementById("bgMusic");
+  const musicBtn = document.getElementById("musicBtn");
+  let isMusicPlaying = false;
+
   const prefersReduced =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -70,6 +74,41 @@
     });
   }
 
+  const parallaxEls = document.querySelectorAll(".glass:not(.gate__panel):not(.ios-dock__inner):not(.toast), .hero__figure");
+  let tickingParallax = false;
+
+  function updateParallax() {
+    if (prefersReduced || !parallaxEls.length) return;
+    const windowH = window.innerHeight;
+    const centerY = windowH / 2;
+
+    parallaxEls.forEach(function (el) {
+      const parentRect = el.parentElement.getBoundingClientRect();
+      if (parentRect.bottom > -200 && parentRect.top < windowH + 200) {
+        const parentCenter = parentRect.top + parentRect.height / 2;
+        const diff = parentCenter - centerY;
+
+        let speed = 0.05;
+        if (el.classList.contains("hero__figure")) speed = 0.15;
+        else if (el.classList.contains("gallery__tile")) speed = 0.08;
+        else if (el.classList.contains("anim-slide-left")) speed = 0.07;
+        else if (el.classList.contains("anim-slide-right")) speed = 0.03;
+
+        el.style.translate = "0 " + (diff * speed) + "px";
+      }
+    });
+  }
+
+  window.addEventListener("scroll", function () {
+    if (!tickingParallax) {
+      window.requestAnimationFrame(function () {
+        updateParallax();
+        tickingParallax = false;
+      });
+      tickingParallax = true;
+    }
+  }, { passive: true });
+
   function showToast(message) {
     if (!toast) return;
     toast.textContent = message;
@@ -84,8 +123,34 @@
     }, 2400);
   }
 
+  function toggleMusic() {
+    if (!bgMusic) return;
+    if (isMusicPlaying) {
+      bgMusic.pause();
+      isMusicPlaying = false;
+      if (musicBtn) musicBtn.classList.add("is-muted");
+    } else {
+      bgMusic.play().then(function () {
+        isMusicPlaying = true;
+        if (musicBtn) musicBtn.classList.remove("is-muted");
+      }).catch(function (e) {
+        console.warn("Audio play blocked.", e);
+      });
+    }
+  }
+
+  if (musicBtn) {
+    musicBtn.addEventListener("click", toggleMusic);
+  }
+
   function showMainChrome() {
     if (iosDock) iosDock.hidden = false;
+    if (musicBtn) {
+      musicBtn.hidden = false;
+      setTimeout(function () {
+        musicBtn.classList.add("is-visible");
+      }, 50);
+    }
   }
 
   function openInvitation() {
@@ -96,9 +161,12 @@
     showMainChrome();
     try {
       sessionStorage.setItem("undangan-opened", "1");
-    } catch (_) {}
+    } catch (_) { }
     if (!prefersReduced) {
       window.setTimeout(observeRevealables, 120);
+    }
+    if (!isMusicPlaying) {
+      toggleMusic();
     }
   }
 
@@ -110,7 +178,7 @@
         main.hidden = false;
         showMainChrome();
       }
-    } catch (_) {}
+    } catch (_) { }
     openBtn.addEventListener("click", openInvitation);
   }
 
@@ -123,7 +191,7 @@
   }
 
   /* Dock: smooth scroll + active state (iOS tab bar feel) */
-  const dockSections = ["beranda", "galeri", "mempelai", "acara", "rsvp"];
+  const dockSections = ["beranda", "galeri", "mempelai", "cerita", "acara", "rsvp"];
   function setDockActive(id) {
     document.querySelectorAll(".ios-dock__item").forEach(function (a) {
       a.classList.toggle("is-active", a.getAttribute("data-section") === id);
