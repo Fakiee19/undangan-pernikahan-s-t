@@ -18,13 +18,14 @@
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // ========================================================
+  // Ambil Nama Tamu dari URL
+  // ========================================================
+  // Ambil nama dari URL (contoh: web.com/?to=Nama+Tamu)
   function getGuestNameFromUrl() {
     try {
       const p = new URLSearchParams(window.location.search);
-      const raw = (p.get("to") || p.get("nama") || p.get("guest") || "").trim();
-      if (!raw) return "";
-      const decoded = decodeURIComponent(raw.replace(/\+/g, " "));
-      return decoded.replace(/\s+/g, " ").trim().slice(0, 80);
+      return (p.get("to") || p.get("nama") || p.get("guest") || p.get("id") || "").trim();
     } catch (_) {
       return "";
     }
@@ -32,7 +33,8 @@
 
   function applyGuestLine(name) {
     if (!name) return;
-    const line = "Kepada Yth. " + name;
+    const decodedName = decodeURIComponent(name.replace(/\+/g, " "));
+    const line = "Kepada Yth. " + decodedName;
     if (gateGuest) {
       gateGuest.textContent = line;
       gateGuest.hidden = false;
@@ -43,7 +45,11 @@
     }
   }
 
-  applyGuestLine(getGuestNameFromUrl());
+  // Inisialisasi data tamu
+  const guestName = getGuestNameFromUrl();
+  if (guestName) {
+    applyGuestLine(guestName);
+  }
 
   const PLACEHOLDER_SRC = "images/placeholder.svg";
   document.querySelectorAll("img.js-photo").forEach(function (img) {
@@ -60,11 +66,15 @@
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           e.target.classList.add("is-visible");
-          scrollReveal.unobserve(e.target);
+        } else {
+          // Cegah flickering/getaran pada batas yang terlalu sensitif dengan tidak langsung menghapus kelas jika belum jauh
+          if (Math.abs(e.boundingClientRect.top) > 100) {
+            e.target.classList.remove("is-visible");
+          }
         }
       });
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.08 }
+    { rootMargin: "5% 0px -5% 0px", threshold: 0 }
   );
 
   function observeRevealables() {
@@ -74,7 +84,8 @@
     });
   }
 
-  const parallaxEls = document.querySelectorAll(".glass:not(.gate__panel):not(.ios-dock__inner):not(.toast), .hero__figure");
+  // Parallax hanya pada elemen spesifik agar tidak bentrok dengan animasi CSS (penyebab bergetar)
+  const parallaxEls = document.querySelectorAll(".hero__figure, .gallery__img");
   let tickingParallax = false;
 
   function updateParallax() {
@@ -89,10 +100,8 @@
         const diff = parentCenter - centerY;
 
         let speed = 0.05;
-        if (el.classList.contains("hero__figure")) speed = 0.15;
-        else if (el.classList.contains("gallery__tile")) speed = 0.08;
-        else if (el.classList.contains("anim-slide-left")) speed = 0.07;
-        else if (el.classList.contains("anim-slide-right")) speed = 0.03;
+        if (el.classList.contains("hero__figure")) speed = 0.07;
+        else if (el.classList.contains("gallery__img")) speed = 0.12;
 
         el.style.translate = "0 " + (diff * speed) + "px";
       }
@@ -358,11 +367,104 @@
     });
   }
 
+  // ========================================================
+  // Fitur Ucapan & Doa
+  // ========================================================
+  const wishesListEl = document.getElementById("wishesList");
+  const btnShowMoreWishes = document.getElementById("btnShowMoreWishes");
+
+  // 1. Buat Spreadsheet Baru di Google Drive.
+  // 2. Klik Extensions -> Apps Script. Paste kode dari file panduan.
+  // 3. Deploy -> New Deployment -> Pilih Web App -> Anyone. Copy URL Deployment ke sini:
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNL_NLMbomyk0xxYMF64WtYtONiqKvH-RnCpk9ZxVmywDrUkEApxup9mKH_mM-TjdO/exec";
+
+  let wishesData = [];
+  let displayWishesCount = 3;
+
+  function renderWishes() {
+    if (!wishesListEl) return;
+    wishesListEl.innerHTML = "";
+
+    // Menampilkan dari atas sesuai batas load
+    const toRender = wishesData.slice(0, displayWishesCount);
+
+    // Jika tidak ada ucapan, beri teks kosong
+    if (wishesData.length === 0) {
+      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
+      if (btnShowMoreWishes) btnShowMoreWishes.hidden = true;
+      return;
+    }
+
+    toRender.forEach((wish, index) => {
+      const card = document.createElement("div");
+      card.className = "wish-card glass anim-on-scroll is-visible";
+
+      const badgeClass = wish.attend ? "wish-card__badge" : "wish-card__badge wish-card__badge--dim";
+      const badgeText = wish.attend ? "Hadir" : "Tidak Hadir";
+
+      card.innerHTML = `
+        <div class="wish-card__header">
+          <div>
+            <h3 class="wish-card__name">${wish.name}</h3>
+            <p class="wish-card__date">${wish.date}</p>
+          </div>
+          <span class="${badgeClass}">${badgeText}</span>
+        </div>
+        <p class="wish-card__text">${wish.text}</p>
+      `;
+      wishesListEl.appendChild(card);
+    });
+
+    if (btnShowMoreWishes) {
+      if (displayWishesCount < wishesData.length) {
+        btnShowMoreWishes.hidden = false;
+      } else {
+        btnShowMoreWishes.hidden = true;
+      }
+    }
+  }
+
+  async function fetchWishes() {
+    if (!GOOGLE_SCRIPT_URL) {
+      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Tautan Google Script belum diatur di script.js.</p>';
+      return;
+    }
+    try {
+      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Memuat ucapan...</p>';
+      const res = await fetch(GOOGLE_SCRIPT_URL);
+      const data = await res.json();
+
+      wishesData = data;
+      wishesData.reverse(); // Supaya yang terbaru tampil di atas
+
+      renderWishes();
+    } catch (e) {
+      console.error("Gagal mengambil ucapan:", e);
+      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Gagal memuat ucapan dari server. Silakan muat ulang.</p>';
+    }
+  }
+
+  if (btnShowMoreWishes) {
+    btnShowMoreWishes.addEventListener("click", () => {
+      displayWishesCount += 3;
+      renderWishes();
+    });
+  }
+
+  // Panggil data awal dari server Google Sheets
+  fetchWishes();
+
   /* Ganti nomor WhatsApp di bawah sebelum dipakai */
   const WA_NUMBER = "6287710549498";
   if (rsvpForm) {
-    rsvpForm.addEventListener("submit", function (e) {
+    rsvpForm.addEventListener("submit", async function (e) {
       e.preventDefault();
+
+      const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = "<span>Menyimpan...</span>";
+      submitBtn.disabled = true;
+
       const fd = new FormData(rsvpForm);
       const name = (fd.get("name") || "").toString().trim();
       const guests = (fd.get("guests") || "1").toString();
@@ -382,8 +484,54 @@
       if (message) {
         text += "%0A%0AUcapan: " + encodeURIComponent(message);
       }
+
+      // Kirim ucapan ke Google Sheets API
+      if (GOOGLE_SCRIPT_URL && name && message) {
+        try {
+          // fetch dengan "text/plain" body mencegah eror CORS preflight
+          await fetch(GOOGLE_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({
+              name: name,
+              attend: attend === "hadir",
+              message: message
+            })
+          });
+
+          // Munculkan di layer lokal biar terasa cepat tanpa reload
+          const d = new Date();
+          const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+          const dateStr = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+          wishesData.unshift({
+            name: name,
+            text: message,
+            date: dateStr,
+            attend: attend === "hadir"
+          });
+
+          if (displayWishesCount < wishesData.length && displayWishesCount < 5) {
+            displayWishesCount++;
+          }
+          renderWishes();
+          showToast("Ucapan tersimpan!");
+
+          // Membersihkan kolom pesan setelah dikirim
+          const msgInput = rsvpForm.querySelector('[name="message"]');
+          if (msgInput) msgInput.value = "";
+        } catch (error) {
+          console.error("Gagal simpan ucapan ke server:", error);
+          showToast("Gagal menyambung ke server. Meneruskan ke WA...");
+        }
+      }
+
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+
       const url = "https://wa.me/" + WA_NUMBER + "?text=" + text;
-      window.open(url, "_blank", "noopener,noreferrer");
+      // Beri sedikit jeda agar toast sempat muncul sebelum pindah ke WA
+      setTimeout(() => {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }, 500);
     });
   }
 })();

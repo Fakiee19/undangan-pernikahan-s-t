@@ -52,10 +52,11 @@
           <img class="hero__photo js-photo" src="images/couple-hero.jpg" width="1200" height="1500"
             sizes="(max-width: 520px) 92vw, 420px" alt="Momen bahagia Supriyadi dan Hayu Kartikasari" loading="eager"
             decoding="async" fetchpriority="high" />
+          <img class="hero__logo" src="images/logo-pernikahan.png" alt="Logo Pernikahan" loading="eager" />
         </figure>
         <p class="hero__guest glass-pill-text anim-text-in" id="heroGuest" hidden></p>
         <p class="eyebrow anim-text-in">Undangan Pernikahan</p>
-        <h1 class="hero__title anim-text-in">Supriyadi <span class="hero__amp">&amp;</span> Hayu Kartikasari</h1>
+        <h1 class="hero__title anim-text-in">Supriyadi<br><span class="hero__amp">&amp;</span><br>Hayu Kartikasari</h1>
         <p class="hero__subtitle anim-text-in">Kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri acara pernikahan
           kami</p>
         <div class="hero__ornament anim-text-in" aria-hidden="true">◇</div>
@@ -229,6 +230,21 @@
         </label>
         <button type="submit" class="submit-btn"><span>Kirim via WhatsApp</span></button>
       </form>
+    </section>
+
+    <section class="section section--wishes" id="ucapan">
+      <h2 class="section__title anim-on-scroll"><span class="title-icon" aria-hidden="true">💬</span>Ucapan &amp; Doa
+      </h2>
+      <p class="section__lead anim-on-scroll anim-on-scroll--delay-sm">Berikan doa dan ucapan terbaik untuk kedua
+        mempelai.</p>
+
+      <div class="wishes-list" id="wishesList">
+        <!-- Daftar ucapan akan diisi melalui JavaScript -->
+      </div>
+
+      <div class="wishes-more anim-on-scroll">
+        <button type="button" class="btn-more glass-btn" id="btnShowMoreWishes" hidden>Lebih Banyak</button>
+      </div>
     </section>
 
     <section class="section section--gift">
