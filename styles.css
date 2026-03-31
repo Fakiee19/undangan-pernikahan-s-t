@@ -108,17 +108,22 @@ body {
 /* ===== Animated background ===== */
 .aurora {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100lvh;
+  /* mencegah pergerakan bacground saat address bar mobile menghilang ketika scroll */
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
   contain: strict;
   background:
-    radial-gradient(ellipse 120% 80% at 50% -20%, rgba(196, 102, 117, 0.32), transparent 50%),
-    radial-gradient(ellipse 90% 70% at 100% 50%, rgba(235, 200, 206, 0.5), transparent 45%),
-    radial-gradient(ellipse 80% 60% at 0% 80%, rgba(107, 36, 51, 0.18), transparent 50%),
-    linear-gradient(rgba(248, 236, 238, 0.45), rgba(248, 236, 238, 0.45)),
-    url('images/bacground.jpg.jpeg') center 65%/cover no-repeat;
+    radial-gradient(circle at 15% 50%, rgba(196, 102, 117, 0.25), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(235, 200, 206, 0.4), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(148, 63, 79, 0.15), transparent 50%),
+    linear-gradient(135deg, var(--maroon-50) 0%, var(--maroon-100) 100%);
+  background-color: var(--maroon-100);
 }
 
 .aurora__orb {
@@ -219,7 +224,7 @@ body {
 }
 
 .glass--hero {
-  padding: clamp(2rem, 5vw, 3rem) clamp(1.5rem, 4vw, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 2.25rem) clamp(1.25rem, 4vw, 2rem);
   max-width: 38rem;
   margin-inline: auto;
 }
@@ -273,8 +278,9 @@ body {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(rgba(26, 12, 16, 0.45), rgba(26, 12, 16, 0.45)),
-    url('images/bacground-opening.jpg') center 40%/cover no-repeat;
+    radial-gradient(ellipse 80% 120% at 50% 0%, var(--maroon-800), transparent 80%),
+    linear-gradient(135deg, var(--maroon-950) 0%, #11050a 100%);
+  background-color: var(--maroon-950);
 }
 
 .gate.is-away {
@@ -290,7 +296,7 @@ body {
   position: relative;
   z-index: 1;
   width: min(100%, 26rem);
-  padding: clamp(2.25rem, 6vw, 3.25rem) clamp(1.75rem, 4vw, 2.5rem);
+  padding: clamp(1.5rem, 5vw, 2rem) clamp(1.25rem, 4vw, 2rem);
   color: var(--ink);
 }
 
@@ -301,9 +307,9 @@ body {
 }
 
 .gate__portrait {
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 0.75rem;
   padding: 0;
-  width: min(11rem, 58vw);
+  width: min(9rem, 45vw);
   aspect-ratio: 1;
   border-radius: 50%;
   overflow: hidden;
@@ -323,7 +329,7 @@ body {
   object-position: center 22%;
   display: block;
   transform: scale(1.02);
-  transition: transform 2s var(--ease-out-expo);
+  transition: transform 8s var(--ease-out-expo);
 }
 
 .gate__portrait:hover .gate__photo {
@@ -366,9 +372,9 @@ body {
 .gate__names {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(2.1rem, 7.5vw, 3.1rem);
-  line-height: 1.12;
-  margin: 0 0 0.35rem;
+  font-size: clamp(1.9rem, 7vw, 2.8rem);
+  line-height: 1.05;
+  margin: 0 0 0.2rem;
   color: var(--ink);
   letter-spacing: -0.02em;
 }
@@ -392,7 +398,7 @@ body {
 .gate__date {
   font-size: 0.92rem;
   color: var(--maroon-800);
-  margin: 0 0 1.85rem;
+  margin: 0 0 1.25rem;
   font-weight: 500;
 }
 
@@ -460,9 +466,9 @@ body {
 }
 
 .hero__figure {
-  margin: 0 auto 1.35rem;
+  margin: 0 auto 0.85rem;
   padding: 0;
-  width: min(20rem, 88vw);
+  width: min(18rem, 78vw);
   border-radius: calc(var(--radius-lg) + 6px);
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -481,7 +487,7 @@ body {
   object-fit: cover;
   object-position: center 20%;
   display: block;
-  transition: transform 2.5s var(--ease-out-expo);
+  transition: transform 8s var(--ease-out-expo);
 }
 
 .hero__logo {
@@ -575,10 +581,10 @@ body {
 .hero__title {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(2rem, 7.5vw, 3rem);
-  line-height: 1.15;
+  font-size: clamp(1.8rem, 7vw, 2.8rem);
+  line-height: 1.05;
   color: var(--ink);
-  margin: 0 0 0.25rem;
+  margin: 0 0 0.2rem;
   letter-spacing: -0.02em;
 }
 
@@ -620,7 +626,7 @@ body {
 }
 
 .hero__ornament {
-  margin-top: 1.75rem;
+  margin-top: 1rem;
   font-family: var(--font-display);
   font-size: 1.25rem;
   color: var(--maroon-400);
@@ -741,6 +747,8 @@ body {
 .gallery__tile {
   appearance: none;
   -webkit-appearance: none;
+  background: transparent;
+  /* Menghilangkan warna background bawaan elemen button */
   margin: 0;
   padding: 0;
   border: none;
@@ -761,14 +769,14 @@ body {
   outline-offset: 3px;
 }
 
-.gallery__tile:hover {
+/* .gallery__tile:hover {
   transform: translateY(-3px) scale(1.01);
 }
 
 .gallery__tile:active {
   transform: scale(0.98);
   transition-duration: 0.12s;
-}
+} */
 
 @media (prefers-reduced-motion: reduce) {
   .gallery__tile:hover {
@@ -787,8 +795,8 @@ body {
   display: block;
   pointer-events: none;
   will-change: transform;
-  /* Efek pergerakan pelan dan smooth (Ken Burns) */
-  animation: gallery-pan 24s ease-in-out infinite alternate;
+  /* Efek pergerakan pelan dan smooth (Ken Burns) dihapus */
+  /* animation: gallery-pan 24s ease-in-out infinite alternate; */
   transition: filter 0.8s var(--ease-ios);
 }
 
@@ -811,10 +819,10 @@ body {
   animation-direction: alternate-reverse;
 }
 
-/* Sedikit efek mencerahkan saat di-hover */
-.gallery__tile:hover .gallery__img {
+/* Sedikit efek mencerahkan saat di-hover dihapus */
+/* .gallery__tile:hover .gallery__img {
   filter: brightness(1.08) contrast(1.03);
-}
+} */
 
 @keyframes gallery-pan {
   0% {
@@ -830,18 +838,19 @@ body {
 /* Cinematic Transition Reveal khusus untuk Gallery */
 .gallery__tile.anim-on-scroll {
   opacity: 0;
-  transform: translateY(80px) scale(0.85);
+  transform: none !important;
+  /* Efek gerak masuk dihapus */
   filter: blur(20px) brightness(0.4);
   /* Override default anim-on-scroll transisi */
   transition:
     opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 1.8s cubic-bezier(0.16, 1, 0.3, 1),
     filter 2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .gallery__tile.anim-on-scroll.is-visible {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: none !important;
+  /* Efek gerak masuk dihapus */
   filter: blur(0) brightness(1);
 }
 
@@ -955,6 +964,11 @@ body {
   object-fit: cover;
   object-position: center;
   display: block;
+  transition: transform 8s var(--ease-out-expo);
+}
+
+.person__portrait:hover .person__photo {
+  transform: scale(1.1);
 }
 
 .person__label {
@@ -1739,4 +1753,92 @@ body {
 
 .btn-more:active {
   transform: scale(0.96);
+}
+
+/* ===== New Premium Static Gallery ===== */
+.section--new-gallery {
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+.pg-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+@media (min-width: 640px) {
+  .pg-grid {
+    gap: 1.25rem;
+  }
+}
+
+.pg-item {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  cursor: zoom-in;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(26, 12, 18, 0.12);
+  will-change: transform, opacity;
+}
+
+/* 1 Landscape di atas */
+.pg-item--1 {
+  grid-column: 1 / -1;
+  aspect-ratio: 16 / 9;
+}
+
+/* 3 Portrait di bawah saling sejajar */
+.pg-item--2,
+.pg-item--3,
+.pg-item--4 {
+  grid-column: span 1;
+  aspect-ratio: 3 / 4;
+}
+
+/* Kemunculan awal terbang dari posisi acak secara super halus (scroll reveal) */
+.pg-item.anim-on-scroll {
+  opacity: 0;
+  transition:
+    transform 2.4s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 2s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+.pg-item--1.anim-on-scroll {
+  transform: translate(0, -60px) scale(0.92) rotate(-2deg) !important;
+}
+
+.pg-item--2.anim-on-scroll {
+  transform: translate(-50px, 80px) scale(0.85) rotate(-6deg) !important;
+}
+
+.pg-item--3.anim-on-scroll {
+  transform: translate(0, 100px) scale(0.9) rotate(2deg) !important;
+}
+
+.pg-item--4.anim-on-scroll {
+  transform: translate(50px, 80px) scale(0.85) rotate(5deg) !important;
+}
+
+/* Saat di-scroll masuk ke dalam viewport -> bertemu dan menyatu rapi di posisinya */
+.pg-item.anim-on-scroll.is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1) rotate(0deg) !important;
+}
+
+/* Gambar disiapkan untuk parallax script.js */
+.pg-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.15);
+  /* Ruang ekstra untuk gerakan parallax scroll */
+  will-change: translate;
 }
