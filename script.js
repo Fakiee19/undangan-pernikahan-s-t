@@ -85,7 +85,7 @@
   }
 
   // Parallax hanya pada elemen spesifik agar tidak bentrok dengan animasi CSS (penyebab bergetar)
-  const parallaxEls = document.querySelectorAll(".hero__figure, .gallery__img");
+  const parallaxEls = document.querySelectorAll(".hero__figure, .pg-item");
   let tickingParallax = false;
 
   function updateParallax() {
@@ -101,7 +101,7 @@
 
         let speed = 0.05;
         if (el.classList.contains("hero__figure")) speed = 0.07;
-        else if (el.classList.contains("gallery__img")) speed = 0.12;
+        else if (el.classList.contains("pg-item")) speed = 0.08;
 
         el.style.translate = "0 " + (diff * speed) + "px";
       }
@@ -381,6 +381,14 @@
   let wishesData = [];
   let displayWishesCount = 3;
 
+  function formatIndoDate(dateStr) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+    return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+  }
+
   function renderWishes() {
     if (!wishesListEl) return;
     wishesListEl.innerHTML = "";
@@ -406,7 +414,7 @@
         <div class="wish-card__header">
           <div>
             <h3 class="wish-card__name">${wish.name}</h3>
-            <p class="wish-card__date">${wish.date}</p>
+            <p class="wish-card__date">${formatIndoDate(wish.date)}</p>
           </div>
           <span class="${badgeClass}">${badgeText}</span>
         </div>

@@ -564,7 +564,7 @@ body {
 
 .anim-text-in {
   opacity: 0;
-  animation: text-rise-smooth 1.8s var(--ease-out-expo) both;
+  animation: text-rise-smooth 2.2s var(--ease-out-expo) both;
 }
 
 /* Stagger delay teks dihapus agar animasi seluruh elemen mulai bersamaan dan smooth instan tanpa antrean */
@@ -591,7 +591,7 @@ body {
 .hero__title.anim-text-in,
 .gate__names.anim-text-in {
   animation-name: title-premium-slide;
-  animation-duration: 2.8s;
+  animation-duration: 3.2s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -643,9 +643,9 @@ body {
   opacity: 0;
   transform: translateY(35px);
   transition:
-    opacity 2.2s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 2.2s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 2.2s cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 2.6s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 2.6s cubic-bezier(0.16, 1, 0.3, 1),
+    filter 2.6s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
 
@@ -725,140 +725,9 @@ body {
   max-width: none;
 }
 
-.section--gallery {
-  max-width: none;
-}
 
-.gallery {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.75rem;
-  max-width: 44rem;
-  margin-inline: auto;
-  contain: layout style;
-}
 
-@media (min-width: 640px) {
-  .gallery {
-    gap: 1rem;
-  }
-}
 
-.gallery__tile {
-  appearance: none;
-  -webkit-appearance: none;
-  background: transparent;
-  /* Menghilangkan warna background bawaan elemen button */
-  margin: 0;
-  padding: 0;
-  border: none;
-  cursor: zoom-in;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  text-align: left;
-  color: inherit;
-  display: block;
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    transform 0.45s var(--ease-ios),
-    box-shadow 0.45s var(--ease-ios);
-}
-
-.gallery__tile:focus-visible {
-  outline: 2px solid var(--maroon-400);
-  outline-offset: 3px;
-}
-
-/* .gallery__tile:hover {
-  transform: translateY(-3px) scale(1.01);
-}
-
-.gallery__tile:active {
-  transform: scale(0.98);
-  transition-duration: 0.12s;
-} */
-
-@media (prefers-reduced-motion: reduce) {
-  .gallery__tile:hover {
-    transform: none;
-  }
-
-  .gallery__tile:active {
-    transform: none;
-  }
-}
-
-.gallery__img {
-  width: 100%;
-  height: auto;
-  /* aspect-ratio dihapus agar proporsi utuh seperti gambar asli */
-  display: block;
-  pointer-events: none;
-  will-change: transform;
-  /* Efek pergerakan pelan dan smooth (Ken Burns) dihapus */
-  /* animation: gallery-pan 24s ease-in-out infinite alternate; */
-  transition: filter 0.8s var(--ease-ios);
-}
-
-/* Variasi animasi tiap foto agar terlihat organik dan berkelas */
-.gallery__tile:nth-child(1) .gallery__img {
-  animation-delay: 0s;
-}
-
-.gallery__tile:nth-child(2) .gallery__img {
-  animation-delay: -9s;
-  animation-direction: alternate-reverse;
-}
-
-.gallery__tile:nth-child(3) .gallery__img {
-  animation-delay: -14s;
-}
-
-.gallery__tile:nth-child(4) .gallery__img {
-  animation-delay: -21s;
-  animation-direction: alternate-reverse;
-}
-
-/* Sedikit efek mencerahkan saat di-hover dihapus */
-/* .gallery__tile:hover .gallery__img {
-  filter: brightness(1.08) contrast(1.03);
-} */
-
-@keyframes gallery-pan {
-  0% {
-    /* Base scale diperbesar (1.15) untuk ruang extra scroll parallax */
-    transform: scale(1.15) translate(0, 0);
-  }
-
-  100% {
-    transform: scale(1.22) translate(-1.5%, -1%);
-  }
-}
-
-/* Cinematic Transition Reveal khusus untuk Gallery */
-.gallery__tile.anim-on-scroll {
-  opacity: 0;
-  transform: none !important;
-  /* Efek gerak masuk dihapus */
-  filter: blur(20px) brightness(0.4);
-  /* Override default anim-on-scroll transisi */
-  transition:
-    opacity 1.8s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.gallery__tile.anim-on-scroll.is-visible {
-  opacity: 1;
-  transform: none !important;
-  /* Efek gerak masuk dihapus */
-  filter: blur(0) brightness(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .gallery__img {
-    animation: none !important;
-  }
-}
 
 .section__title {
   display: flex;
@@ -1806,8 +1675,8 @@ body {
 .pg-item.anim-on-scroll {
   opacity: 0;
   transition:
-    transform 2.4s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transform 2.8s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 2.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .pg-item--1.anim-on-scroll {
@@ -1838,7 +1707,5 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
-  transform: scale(1.15);
-  /* Ruang ekstra untuk gerakan parallax scroll */
-  will-change: translate;
+  pointer-events: none;
 }
