@@ -224,8 +224,8 @@ body {
 }
 
 .glass--hero {
-  padding: clamp(1.5rem, 5vw, 2.25rem) clamp(1.25rem, 4vw, 2rem);
-  max-width: 38rem;
+  padding: clamp(1rem, 4vw, 1.5rem) clamp(1rem, 3vw, 1.25rem);
+  max-width: 36rem;
   margin-inline: auto;
 }
 
@@ -295,8 +295,8 @@ body {
 .gate__panel {
   position: relative;
   z-index: 1;
-  width: min(100%, 26rem);
-  padding: clamp(1.5rem, 5vw, 2rem) clamp(1.25rem, 4vw, 2rem);
+  width: min(100%, 24rem);
+  padding: clamp(1.2rem, 4vw, 1.5rem) clamp(1rem, 3vw, 1.25rem);
   color: var(--ink);
 }
 
@@ -370,13 +370,14 @@ body {
 }
 
 .gate__names {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.9rem, 7vw, 2.8rem);
-  line-height: 1.05;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  line-height: 1.1;
   margin: 0 0 0.2rem;
   color: var(--ink);
-  letter-spacing: -0.02em;
+  letter-spacing: 0.05em;
 }
 
 .gate__amp {
@@ -579,13 +580,14 @@ body {
 }
 
 .hero__title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(1.8rem, 7vw, 2.8rem);
-  line-height: 1.05;
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(1.4rem, 5vw, 2rem);
+  line-height: 1.1;
   color: var(--ink);
   margin: 0 0 0.2rem;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.05em;
 }
 
 .hero__title.anim-text-in,
@@ -813,7 +815,7 @@ body {
 }
 
 .person {
-  padding: clamp(1.5rem, 3vw, 2rem) clamp(1.25rem, 3vw, 1.75rem);
+  padding: clamp(1.2rem, 3vw, 1.5rem) clamp(1rem, 3vw, 1.25rem);
 }
 
 .person__portrait {
@@ -850,12 +852,35 @@ body {
 }
 
 .person__name {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1.45rem, 4vw, 1.85rem);
+  font-family: "Times New Roman", Times, serif;
+  font-weight: 400;
+  text-transform: uppercase;
+  font-size: clamp(1.15rem, 3.5vw, 1.45rem);
   color: var(--ink);
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.2rem;
   line-height: 1.2;
+  letter-spacing: 0.05em;
+}
+
+.person__ig {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--maroon-600);
+  text-decoration: none;
+  margin-bottom: 0.65rem;
+  transition: color 0.3s var(--ease-ios);
+}
+
+.person__ig:hover {
+  color: var(--maroon-800);
+}
+
+.person__ig svg {
+  width: 1.1em;
+  height: 1.1em;
 }
 
 .person__parents {
