@@ -17,6 +17,68 @@
   const prefersReduced =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const smoothScroll = prefersReduced ? "auto" : "smooth";
+
+  const revealSeen = new WeakSet();
+  const scrollReveal = new IntersectionObserver(
+    function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        var e = entries[i];
+        if (!e.isIntersecting) continue;
+        e.target.classList.add("is-visible");
+        scrollReveal.unobserve(e.target);
+      }
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.02 }
+  );
+
+  function observeRevealables() {
+    if (prefersReduced) return;
+    document.querySelectorAll(".anim-on-scroll").forEach(function (el) {
+      if (revealSeen.has(el)) return;
+      revealSeen.add(el);
+      scrollReveal.observe(el);
+    });
+  }
+
+  function replayMainTextAnimations(root) {
+    if (prefersReduced || !root) return;
+    root.querySelectorAll(".anim-text-in").forEach(function (el) {
+      el.style.animation = "none";
+      void el.offsetHeight;
+      el.style.removeProperty("animation");
+    });
+  }
+
+  var parallaxPairs = [];
+  function refreshParallaxPairs() {
+    parallaxPairs = [];
+    var heroImg = document.querySelector(".hero__figure .hero__photo");
+    if (heroImg) parallaxPairs.push({ img: heroImg, amp: 10 });
+    document.querySelectorAll(".person__photo").forEach(function (img) {
+      parallaxPairs.push({ img: img, amp: 8 });
+    });
+    document.querySelectorAll(".pg-item .pg-img").forEach(function (img) {
+      parallaxPairs.push({ img: img, amp: 12 });
+    });
+  }
+  refreshParallaxPairs();
+
+  function updateParallax() {
+    if (prefersReduced || !parallaxPairs.length) return;
+    var vh = window.innerHeight || 1;
+    var cy = vh * 0.5;
+    for (var i = 0; i < parallaxPairs.length; i++) {
+      var p = parallaxPairs[i];
+      var box = p.img.parentElement;
+      if (!box) continue;
+      var r = box.getBoundingClientRect();
+      if (r.bottom < -100 || r.top > vh + 100) continue;
+      var mid = r.top + r.height * 0.5;
+      var off = ((mid - cy) / vh) * p.amp;
+      p.img.style.transform = "translate3d(0," + off.toFixed(1) + "px,0) scale(1.05)";
+    }
+  }
 
   // ========================================================
   // Ambil Nama Tamu dari URL
@@ -60,63 +122,6 @@
       img.src = PLACEHOLDER_SRC;
     });
   });
-
-  const scrollReveal = new IntersectionObserver(
-    function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-visible");
-        } else {
-          // Cegah flickering/getaran pada batas yang terlalu sensitif dengan tidak langsung menghapus kelas jika belum jauh
-          if (Math.abs(e.boundingClientRect.top) > 100) {
-            e.target.classList.remove("is-visible");
-          }
-        }
-      });
-    },
-    { rootMargin: "5% 0px -5% 0px", threshold: 0 }
-  );
-
-  function observeRevealables() {
-    if (prefersReduced) return;
-    document.querySelectorAll(".anim-on-scroll").forEach(function (el) {
-      scrollReveal.observe(el);
-    });
-  }
-
-  // Parallax hanya pada elemen spesifik agar tidak bentrok dengan animasi CSS (penyebab bergetar)
-  const parallaxEls = document.querySelectorAll(".hero__figure, .pg-item");
-  let tickingParallax = false;
-
-  function updateParallax() {
-    if (prefersReduced || !parallaxEls.length) return;
-    const windowH = window.innerHeight;
-    const centerY = windowH / 2;
-
-    parallaxEls.forEach(function (el) {
-      const parentRect = el.parentElement.getBoundingClientRect();
-      if (parentRect.bottom > -200 && parentRect.top < windowH + 200) {
-        const parentCenter = parentRect.top + parentRect.height / 2;
-        const diff = parentCenter - centerY;
-
-        let speed = 0.05;
-        if (el.classList.contains("hero__figure")) speed = 0.07;
-        else if (el.classList.contains("pg-item")) speed = 0.08;
-
-        el.style.translate = "0 " + (diff * speed) + "px";
-      }
-    });
-  }
-
-  window.addEventListener("scroll", function () {
-    if (!tickingParallax) {
-      window.requestAnimationFrame(function () {
-        updateParallax();
-        tickingParallax = false;
-      });
-      tickingParallax = true;
-    }
-  }, { passive: true });
 
   function showToast(message) {
     if (!toast) return;
@@ -171,8 +176,13 @@
     try {
       sessionStorage.setItem("undangan-opened", "1");
     } catch (_) { }
+    replayMainTextAnimations(main);
+    window.requestAnimationFrame(function () {
+      window.scrollTo(0, 0);
+      updateParallax();
+    });
     if (!prefersReduced) {
-      window.setTimeout(observeRevealables, 120);
+      window.setTimeout(observeRevealables, 80);
     }
     if (!isMusicPlaying) {
       toggleMusic();
@@ -186,6 +196,11 @@
         gate.setAttribute("aria-hidden", "true");
         main.hidden = false;
         showMainChrome();
+        replayMainTextAnimations(main);
+        if (!prefersReduced) {
+          window.setTimeout(observeRevealables, 80);
+        }
+        window.requestAnimationFrame(updateParallax);
       }
     } catch (_) { }
     openBtn.addEventListener("click", openInvitation);
@@ -199,7 +214,7 @@
     observeRevealables();
   }
 
-  /* Dock: smooth scroll + active state (iOS tab bar feel) */
+  /* Dock + satu listener scroll untuk parallax & tab aktif */
   const dockSections = ["beranda", "galeri", "mempelai", "cerita", "acara", "rsvp"];
   function setDockActive(id) {
     document.querySelectorAll(".ios-dock__item").forEach(function (a) {
@@ -207,6 +222,8 @@
     });
   }
 
+  var dockById = {};
+  var pickDockActive = null;
   if (iosDock) {
     iosDock.querySelectorAll('a[href^="#"]').forEach(function (link) {
       link.addEventListener("click", function (e) {
@@ -215,48 +232,44 @@
         const el = document.querySelector(href);
         if (!el) return;
         e.preventDefault();
-        el.scrollIntoView({
-          behavior: prefersReduced ? "auto" : "smooth",
-          block: "start",
-        });
+        el.scrollIntoView({ behavior: smoothScroll, block: "start" });
         const id = (href.slice(1) || "").toLowerCase();
         if (id) setDockActive(id);
       });
     });
 
-    const byId = {};
     dockSections.forEach(function (sid) {
       const node = document.getElementById(sid);
-      if (node) byId[sid] = node;
+      if (node) dockById[sid] = node;
     });
 
-    let ticking = false;
-    function sectionDocTop(el) {
-      return el.getBoundingClientRect().top + window.scrollY;
-    }
-
-    function pickActiveFromScroll() {
-      ticking = false;
+    pickDockActive = function () {
       const y = window.scrollY + Math.min(160, window.innerHeight * 0.18);
       let current = dockSections[0];
-      dockSections.forEach(function (sid) {
-        const sec = byId[sid];
-        if (!sec) return;
-        const top = sectionDocTop(sec);
+      for (var d = 0; d < dockSections.length; d++) {
+        const sid = dockSections[d];
+        const sec = dockById[sid];
+        if (!sec) continue;
+        const top = sec.getBoundingClientRect().top + window.scrollY;
         if (y + 1 >= top) current = sid;
-      });
+      }
       setDockActive(current);
-    }
-
-    function onScrollDock() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(pickActiveFromScroll);
-    }
-
-    window.addEventListener("scroll", onScrollDock, { passive: true });
-    pickActiveFromScroll();
+    };
+    pickDockActive();
   }
+
+  var scrollRaf = false;
+  function onWindowScroll() {
+    if (scrollRaf) return;
+    scrollRaf = true;
+    requestAnimationFrame(function () {
+      scrollRaf = false;
+      updateParallax();
+      if (pickDockActive) pickDockActive();
+      if (toTop) toTop.classList.toggle("is-visible", window.scrollY > 380);
+    });
+  }
+  window.addEventListener("scroll", onWindowScroll, { passive: true });
 
   function pad(n) {
     return String(n).padStart(2, "0");
@@ -301,15 +314,8 @@
   tickCountdown();
 
   if (toTop) {
-    window.addEventListener(
-      "scroll",
-      function () {
-        toTop.classList.toggle("is-visible", window.scrollY > 380);
-      },
-      { passive: true }
-    );
     toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: smoothScroll });
     });
   }
 
@@ -336,7 +342,11 @@
   const lightboxClose = document.getElementById("lightboxClose");
 
   function closePhotoLightbox() {
-    if (photoLightbox && photoLightbox.open) photoLightbox.close();
+    if (photoLightbox && photoLightbox.open) {
+      photoLightbox.close();
+      if (lightboxImg) lightboxImg.removeAttribute("src");
+      document.body.style.overflow = "";
+    }
   }
 
   function openPhotoLightbox(src, alt) {
@@ -345,6 +355,7 @@
     lightboxImg.alt = alt || "";
     if (typeof photoLightbox.showModal === "function") {
       photoLightbox.showModal();
+      document.body.style.overflow = "hidden";
     }
   }
 
@@ -405,7 +416,7 @@
 
     toRender.forEach((wish, index) => {
       const card = document.createElement("div");
-      card.className = "wish-card glass anim-on-scroll is-visible";
+      card.className = "wish-card glass";
 
       const badgeClass = wish.attend ? "wish-card__badge" : "wish-card__badge wish-card__badge--dim";
       const badgeText = wish.attend ? "Hadir" : "Tidak Hadir";
