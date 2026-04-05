@@ -137,6 +137,18 @@
     }, 2400);
   }
 
+  // Auto play music on load
+  function initMusic() {
+    if (!bgMusic) return;
+    bgMusic.volume = 0.35; // Lower volume for auto play
+    bgMusic.play().then(function () {
+      isMusicPlaying = true;
+      if (musicBtn) musicBtn.classList.remove("is-muted");
+    }).catch(function (e) {
+      console.warn("Auto play blocked by browser:", e);
+    });
+  }
+
   function toggleMusic() {
     if (!bgMusic) return;
     if (isMusicPlaying) {
@@ -155,6 +167,13 @@
 
   if (musicBtn) {
     musicBtn.addEventListener("click", toggleMusic);
+  }
+
+  // Call auto play after DOM loaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMusic);
+  } else {
+    initMusic();
   }
 
   function showMainChrome() {
@@ -213,6 +232,14 @@
   } else if (main && !main.hidden) {
     observeRevealables();
   }
+
+  // Disable scroll animations replay and parallax for no repetition
+  window.addEventListener('scroll', function() {
+    document.querySelectorAll('.anim-on-scroll').forEach(function(el) {
+      el.classList.add('is-visible');
+    });
+    scrollReveal.disconnect();
+  }, { once: true, passive: true });
 
   /* Dock + satu listener scroll untuk parallax & tab aktif */
   const dockSections = ["beranda", "galeri", "mempelai", "cerita", "acara", "rsvp"];
@@ -382,15 +409,14 @@
   // Fitur Ucapan & Doa
   // ========================================================
   const wishesListEl = document.getElementById("wishesList");
-  const btnShowMoreWishes = document.getElementById("btnShowMoreWishes");
 
   // 1. Buat Spreadsheet Baru di Google Drive.
   // 2. Klik Extensions -> Apps Script. Paste kode dari file panduan.
   // 3. Deploy -> New Deployment -> Pilih Web App -> Anyone. Copy URL Deployment ke sini:
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNL_NLMbomyk0xxYMF64WtYtONiqKvH-RnCpk9ZxVmywDrUkEApxup9mKH_mM-TjdO/exec";
 
-  let wishesData = [];
-  let displayWishesCount = 3;
+let wishesData = [];
+const displayWishesCount = Infinity; // Show all messages, const since never changes
 
   function formatIndoDate(dateStr) {
     if (!dateStr) return "";
@@ -408,11 +434,10 @@
     const toRender = wishesData.slice(0, displayWishesCount);
 
     // Jika tidak ada ucapan, beri teks kosong
-    if (wishesData.length === 0) {
-      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
-      if (btnShowMoreWishes) btnShowMoreWishes.hidden = true;
-      return;
-    }
+      if (wishesData.length === 0) {
+        wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
+        return;
+      }
 
     toRender.forEach((wish, index) => {
       const card = document.createElement("div");
@@ -424,7 +449,7 @@
       card.innerHTML = `
         <div class="wish-card__header">
           <div>
-            <h3 class="wish-card__name">${wish.name}</h3>
+<h3 class="wish-card__name">${wish.name} <span class="wish-card__blue-badge">✓</span></h3>
             <p class="wish-card__date">${formatIndoDate(wish.date)}</p>
           </div>
           <span class="${badgeClass}">${badgeText}</span>
@@ -434,13 +459,6 @@
       wishesListEl.appendChild(card);
     });
 
-    if (btnShowMoreWishes) {
-      if (displayWishesCount < wishesData.length) {
-        btnShowMoreWishes.hidden = false;
-      } else {
-        btnShowMoreWishes.hidden = true;
-      }
-    }
   }
 
   async function fetchWishes() {
@@ -463,12 +481,7 @@
     }
   }
 
-  if (btnShowMoreWishes) {
-    btnShowMoreWishes.addEventListener("click", () => {
-      displayWishesCount += 3;
-      renderWishes();
-    });
-  }
+  // Event listener for "Lebih Banyak" button removed as all wishes now show by default
 
   // Panggil data awal dari server Google Sheets
   fetchWishes();
@@ -528,9 +541,7 @@
             attend: attend === "hadir"
           });
 
-          if (displayWishesCount < wishesData.length && displayWishesCount < 5) {
-            displayWishesCount++;
-          }
+          // No need to adjust displayWishesCount - always shows all
           renderWishes();
           showToast("Ucapan tersimpan!");
 
