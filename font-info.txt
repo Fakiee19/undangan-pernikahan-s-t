@@ -1,0 +1,19 @@
+KODE UKURAN "24 05 26" DI HARI BAHAGIA:
+
+1. HTML - index.html (section id="acara"):
+```
+<p class="section__lead anim-on-scroll anim-on-scroll--delay-sm date-highlight"><strong>24 05 26</strong></p>
+```
+
+2. CSS - styles.css (akhir file):
+```
+.date-highlight {
+  font-family: var(--font-display);  /* "Cormorant Garamond", Georgia, "Times New Roman", serif */
+  font-size: 1.1rem;                 /* UKURAN INI: 1.1rem */
+  margin-top: 0.2rem;
+  font-weight: 600;
+}
+```
+
+Untuk membesarkan font, ganti `font-size: 1.1rem;` menjadi ukuran lebih besar (contoh: 1.2rem atau 1.3rem).
+

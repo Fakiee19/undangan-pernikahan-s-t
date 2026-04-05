@@ -19,7 +19,7 @@
 
 11. [x] Update footer .footer__sign to match mempelai names style (Bonheur Royale, clamp(1.8rem, 5vw, 2.4rem))
 
-12. [x] Disable all scroll effects/repetitions in script.js
+12. [x] Re-enabled scroll effects (removed disable code per user request)
 
 13. [x] Enable auto-play music on load in script.js (volume 0.35)
 

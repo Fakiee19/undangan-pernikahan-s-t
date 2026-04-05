@@ -17,7 +17,7 @@
   const prefersReduced =
     typeof window.matchMedia === "function" &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const smoothScroll = prefersReduced ? "auto" : "smooth";
+  const scrollDuration = prefersReduced ? 0 : 800; // ms, visible slow effect
 
   const revealSeen = new WeakSet();
   const scrollReveal = new IntersectionObserver(
@@ -29,16 +29,19 @@
         scrollReveal.unobserve(e.target);
       }
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.02 }
+    { rootMargin: "0px 0px -12% 0px", threshold: 0.1 }
   );
 
   function observeRevealables() {
     if (prefersReduced) return;
-    document.querySelectorAll(".anim-on-scroll").forEach(function (el) {
+    // Re-observe periodically for dynamic content (wishes)
+    document.querySelectorAll(".anim-on-scroll:not(.is-visible)").forEach(function (el) {
       if (revealSeen.has(el)) return;
       revealSeen.add(el);
       scrollReveal.observe(el);
     });
+    // Re-run after short delay for new content
+    setTimeout(observeRevealables, 500);
   }
 
   function replayMainTextAnimations(root) {
@@ -197,7 +200,7 @@
     } catch (_) { }
     replayMainTextAnimations(main);
     window.requestAnimationFrame(function () {
-      window.scrollTo(0, 0);
+      smoothScrollTo(0, scrollDuration);
       updateParallax();
     });
     if (!prefersReduced) {
@@ -233,13 +236,8 @@
     observeRevealables();
   }
 
-  // Disable scroll animations replay and parallax for no repetition
-  window.addEventListener('scroll', function() {
-    document.querySelectorAll('.anim-on-scroll').forEach(function(el) {
-      el.classList.add('is-visible');
-    });
-    scrollReveal.disconnect();
-  }, { once: true, passive: true });
+// Scroll effects fully enabled
+  // No disabling - observer handles reveals, WeakSet prevents repeats
 
   /* Dock + satu listener scroll untuk parallax & tab aktif */
   const dockSections = ["beranda", "galeri", "mempelai", "cerita", "acara", "rsvp"];
@@ -259,7 +257,7 @@
         const el = document.querySelector(href);
         if (!el) return;
         e.preventDefault();
-        el.scrollIntoView({ behavior: smoothScroll, block: "start" });
+        smoothScrollTo(el.offsetTop - 20, scrollDuration); // slight offset for dock
         const id = (href.slice(1) || "").toLowerCase();
         if (id) setDockActive(id);
       });
@@ -283,6 +281,32 @@
       setDockActive(current);
     };
     pickDockActive();
+  }
+
+  // Custom smooth scroll function for visible effect
+  function smoothScrollTo(targetY, duration) {
+    if (duration <= 0) {
+      window.scrollTo(0, targetY);
+      return;
+    }
+    const startY = window.scrollY;
+    const distance = targetY - startY;
+    const startTime = performance.now();
+
+    function step(currentTime) {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // iOS-like easing: cubic-bezier(0.25, 0.1, 0.25, 1)
+      const ease = 1 - Math.pow(1 - progress, 3);
+      
+      window.scrollTo(0, startY + distance * ease);
+      
+      if (progress < 1) {
+        requestAnimationFrame(step);
+      }
+    }
+    requestAnimationFrame(step);
   }
 
   var scrollRaf = false;
@@ -342,7 +366,7 @@
 
   if (toTop) {
     toTop.addEventListener("click", function () {
-      window.scrollTo({ top: 0, behavior: smoothScroll });
+      smoothScrollTo(0, scrollDuration);
     });
   }
 
@@ -469,10 +493,34 @@ const displayWishesCount = Infinity; // Show all messages, const since never cha
     try {
       wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Memuat ucapan...</p>';
       const res = await fetch(GOOGLE_SCRIPT_URL);
-      const data = await res.json();
+      const rawData = await res.text();
+      
+      let data;
+      try {
+        data = JSON.parse(rawData);
+      } catch (parseErr) {
+        console.error('JSON parse error:', parseErr.message, '- Raw:', rawData.slice(0, 200));
+        data = [];
+      }
 
-      wishesData = data;
-      wishesData.reverse(); // Supaya yang terbaru tampil di atas
+      // Filter & sanitize data
+      wishesData = (Array.isArray(data) ? data : []).filter(wish => 
+        wish && (typeof wish.name === 'string' || typeof wish.name === 'number') && 
+        typeof wish.text === 'string'
+      ).map(wish => ({
+        name: (function() {
+          let n = wish.name;
+          if (typeof n === 'string') return n.trim().slice(0, 50);
+          if (typeof n === 'number') return String(n).slice(0, 50);
+          if (n instanceof Date || /T[0-9]{2}:[0-9]{2}/.test(String(n))) return 'Tamu';
+          return 'Tamu';
+        })(),
+        text: String(wish.text || '').trim().slice(0, 500),
+        date: wish.date || new Date().toISOString().split('T')[0],
+        attend: Boolean(wish.attend)
+      })); 
+      
+      wishesData.reverse();
 
       renderWishes();
     } catch (e) {

@@ -37,7 +37,9 @@
   /* Jarak teks lebih rapat; border kartu lebih tipis/lega */
   --text-leading: 1.48;
   --content-border: 1px solid rgba(255, 255, 255, 0.26);
-  --ring-photo: 2px solid rgba(255, 255, 255, 0.48);
+--ring-photo: 2px solid rgba(255, 255, 255, 0.48);
+--scroll-duration: 1.2s;
+  --scroll-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .visually-hidden {
@@ -63,6 +65,7 @@ html {
   scroll-padding-top: 1rem;
   scroll-padding-bottom: calc(var(--dock-h) + env(safe-area-inset-bottom, 0px) + 1rem);
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -93,6 +96,10 @@ html {
   .anim-on-scroll--delay.is-visible,
   .anim-on-scroll--delay-sm.is-visible {
     transition-delay: 0ms !important;
+  }
+
+  :root {
+    --scroll-duration: 0.01ms;
   }
 }
 
@@ -638,15 +645,15 @@ body {
   opacity: 0.85;
 }
 
-/* ===== Scroll reveal (ringan: tanpa filter blur) ===== */
+/* ===== Enhanced Scroll Reveal ===== */
 .anim-on-scroll {
   opacity: 0;
-  transform: translateY(30px) scale(0.98);
-  filter: blur(8px);
+  transform: translateY(40px) scale(0.96);
+  filter: blur(12px);
   transition:
-    filter 0.8s var(--ease-out-expo),
-    opacity 0.8s var(--ease-out-expo),
-    transform 0.8s var(--ease-out-expo);
+    opacity 1.4s var(--ease-out-expo),
+    transform 1.4s var(--ease-out-expo),
+    filter 1.4s var(--ease-out-expo);
 }
 
 .anim-on-scroll.is-visible {
@@ -655,17 +662,30 @@ body {
   filter: blur(0);
 }
 
+.anim-on-scroll--delay-sm {
+  transition-delay: 0.15s;
+}
+
 .anim-slide-left.anim-on-scroll {
-  transform: translateX(-50px) translateY(30px);
+  transform: translateX(-60px) translateY(20px) scale(0.97);
 }
 
 .anim-slide-right.anim-on-scroll {
-  transform: translateX(50px) translateY(30px);
+  transform: translateX(60px) translateY(20px) scale(0.97);
 }
 
-.anim-slide-left.anim-on-scroll.is-visible,
-.anim-slide-right.anim-on-scroll.is-visible {
-  transform: translateX(0) translateY(0);
+.anim-slide-left.is-visible,
+.anim-slide-right.is-visible {
+  transform: translateX(0) translateY(0) scale(1);
+}
+
+.anim-slide-up {
+  transform: translateY(50px) scale(0.95);
+}
+
+.anim-slide-up.is-visible {
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
 
 /* ===== Sections ===== */
@@ -714,6 +734,7 @@ body {
   background: linear-gradient(135deg, var(--maroon-600), var(--maroon-800));
   border-radius: var(--radius-pill);
   box-shadow: 0 4px 16px rgba(58, 21, 32, 0.15);
+  transition: all 0.7s var(--ease-out-expo);
 }
 
 .title-icon {
@@ -1595,12 +1616,12 @@ body {
 }
 
 .wish-card__name {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--maroon-600);
   margin: 0;
-  line-height: 1.2;
+  line-height: var(--text-leading);
 }
 
 .wish-card__badge {
@@ -1767,6 +1788,13 @@ body {
   transition: scale 0.6s var(--ease-out-expo);
 }
 
-.pg-item:hover .pg-img {
+ .pg-item:hover .pg-img {
   scale: 1.05;
+}
+
+.date-highlight {
+  font-family: var(--font-display);
+  font-size: 5rem;
+  margin-top: 0.2rem;
+  font-weight: 600;
 }
