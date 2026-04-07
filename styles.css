@@ -783,7 +783,7 @@ body {
 .quote p {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(1.05rem, 2.8vw, 1.28rem);
+  font-size: clamp(0.92rem, 2.4vw, 1.12rem);
   line-height: var(--text-leading);
   color: var(--ink);
   margin: 0 0 0.45rem;
@@ -986,7 +986,7 @@ body {
 .story-item__title {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: 1.35rem;
+  font-size: 1.18rem;
   color: var(--ink);
   margin: 0 0 0.25rem;
 }
@@ -1292,7 +1292,7 @@ body {
 .footer__thanks {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: clamp(1.05rem, 2.5vw, 1.18rem);
+  font-size: clamp(0.92rem, 2.2vw, 1.05rem);
   color: var(--ink);
   margin: 0 auto 0.4rem;
   max-width: 38rem;
