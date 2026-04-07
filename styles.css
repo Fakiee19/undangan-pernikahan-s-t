@@ -22,7 +22,7 @@
   --radius-md: 16px;
   --radius-sm: 12px;
   --radius-pill: 999px;
-  --font-display: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --font-display: "Times New Roman", Georgia, serif;
   --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -30,10 +30,10 @@
   --dur: 0.9s;
   --dock-h: 4.25rem;
   /* Blur dikurangi sedikit agar backdrop-filter lebih ringan (tampilan tetap kaca) */
-  --glass-blur: 16px;
-  --glass-blur-strong: 20px;
-  --glass-saturate: 1.32;
-  --glass-saturate-strong: 1.28;
+  --glass-blur: 20px;
+  --glass-blur-strong: 28px;
+  --glass-saturate: 1.45;
+  --glass-saturate-strong: 1.42;
   /* Jarak teks lebih rapat; border kartu lebih tipis/lega */
   --text-leading: 1.48;
   --content-border: 1px solid rgba(255, 255, 255, 0.26);
@@ -103,6 +103,12 @@ html {
   }
 }
 
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+}
+
 body {
   margin: 0;
   font-family: var(--font-ui);
@@ -110,7 +116,12 @@ body {
   font-size: 1rem;
   line-height: var(--text-leading);
   color: var(--ink-soft);
-  background: var(--maroon-100);
+  background-image: url('images/bacground.webp');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: var(--maroon-100);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -129,19 +140,19 @@ body {
   overflow: hidden;
   pointer-events: none;
   contain: strict;
+  mix-blend-mode: screen;
   background:
-    radial-gradient(circle at 15% 50%, rgba(196, 102, 117, 0.25), transparent 50%),
-    radial-gradient(circle at 85% 30%, rgba(235, 200, 206, 0.4), transparent 50%),
-    radial-gradient(circle at 50% 80%, rgba(148, 63, 79, 0.15), transparent 50%),
-    linear-gradient(135deg, var(--maroon-50) 0%, var(--maroon-100) 100%);
-  background-color: var(--maroon-100);
+    radial-gradient(circle at 15% 50%, rgba(196, 102, 117, 0.2), transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(235, 200, 206, 0.3), transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(148, 63, 79, 0.12), transparent 50%),
+    linear-gradient(135deg, var(--maroon-50) 0%, transparent 100%);
 }
 
 .aurora__orb {
   position: absolute;
   border-radius: 50%;
   filter: blur(56px);
-  opacity: 0.55;
+  opacity: 0.4;
   transform: translate3d(0, 0, 0);
   animation: float-orb 22s var(--ease-out-expo) infinite;
 }
@@ -236,32 +247,32 @@ body {
 
 .glass--hero {
   padding: clamp(0.75rem, 3vw, 1.1rem) clamp(0.85rem, 2.5vw, 1.05rem);
-  max-width: 36rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
 .glass--pad {
   padding: clamp(0.95rem, 2.5vw, 1.35rem);
-  max-width: 38rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
 .glass--muted {
   padding: clamp(1.25rem, 3vw, 1.65rem) clamp(1.1rem, 2.5vw, 1.35rem);
-  max-width: 40rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
 .glass--form {
   padding: clamp(1.2rem, 3vw, 1.65rem);
-  max-width: 28rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
 .glass--footer {
   padding: 1.25rem 1.15rem;
   display: block;
-  width: min(100%, 44rem);
+  width: min(100%, 42rem);
   margin-inline: auto;
 }
 
@@ -724,8 +735,8 @@ body {
   align-items: center;
   justify-content: center;
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-weight: 400;
+  font-size: clamp(0.95rem, 2.8vw, 1.15rem);
   color: var(--ivory);
   margin: 0 auto 0.55rem;
   width: max-content;
@@ -763,7 +774,7 @@ body {
 }
 
 .quote {
-  max-width: 36rem;
+  max-width: 42rem;
   margin: 0 auto;
   padding: clamp(1.05rem, 3vw, 1.45rem) clamp(1rem, 2.5vw, 1.35rem);
   border: none;
@@ -962,7 +973,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
-  max-width: 32rem;
+  max-width: 42rem;
   margin: 0 auto;
 }
 
@@ -1173,7 +1184,7 @@ body {
 .gift-cards {
   display: grid;
   gap: 0.6rem;
-  max-width: 44rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
@@ -1253,7 +1264,7 @@ body {
   position: relative;
   margin: 0 auto 1.25rem;
   padding: 0;
-  width: min(100%, 44rem);
+  width: min(100%, 42rem);
   aspect-ratio: 16 / 9;
   border-radius: var(--radius-lg);
   overflow: hidden;
@@ -1297,7 +1308,7 @@ body {
   font-family: "Bonheur Royale", cursive;
   font-weight: 400;
   text-transform: none;
-  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  font-size: clamp(1.4rem, 4vw, 1.8rem);
   color: var(--ink);
   margin: 0 0 0.2rem;
   line-height: 1.2;
@@ -1705,7 +1716,7 @@ body {
 
 /* ===== New Premium Static Gallery ===== */
 .section--new-gallery {
-  max-width: 48rem;
+  max-width: 42rem;
   margin-inline: auto;
 }
 
@@ -1788,7 +1799,7 @@ body {
   transition: scale 0.6s var(--ease-out-expo);
 }
 
- .pg-item:hover .pg-img {
+.pg-item:hover .pg-img {
   scale: 1.05;
 }
 

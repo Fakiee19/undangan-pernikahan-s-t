@@ -236,7 +236,7 @@
     observeRevealables();
   }
 
-// Scroll effects fully enabled
+  // Scroll effects fully enabled
   // No disabling - observer handles reveals, WeakSet prevents repeats
 
   /* Dock + satu listener scroll untuk parallax & tab aktif */
@@ -439,8 +439,8 @@
   // 3. Deploy -> New Deployment -> Pilih Web App -> Anyone. Copy URL Deployment ke sini:
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNL_NLMbomyk0xxYMF64WtYtONiqKvH-RnCpk9ZxVmywDrUkEApxup9mKH_mM-TjdO/exec";
 
-let wishesData = [];
-const displayWishesCount = Infinity; // Show all messages, const since never changes
+  let wishesData = [];
+  const displayWishesCount = Infinity; // Show all messages, const since never changes
 
   function formatIndoDate(dateStr) {
     if (!dateStr) return "";
@@ -458,10 +458,10 @@ const displayWishesCount = Infinity; // Show all messages, const since never cha
     const toRender = wishesData.slice(0, displayWishesCount);
 
     // Jika tidak ada ucapan, beri teks kosong
-      if (wishesData.length === 0) {
-        wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
-        return;
-      }
+    if (wishesData.length === 0) {
+      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
+      return;
+    }
 
     toRender.forEach((wish, index) => {
       const card = document.createElement("div");
@@ -473,7 +473,7 @@ const displayWishesCount = Infinity; // Show all messages, const since never cha
       card.innerHTML = `
         <div class="wish-card__header">
           <div>
-<h3 class="wish-card__name">${wish.name} <span class="wish-card__blue-badge">✓</span></h3>
+            <h3 class="wish-card__name">${wish.name} <span class="wish-card__blue-badge">✓</span></h3>
             <p class="wish-card__date">${formatIndoDate(wish.date)}</p>
           </div>
           <span class="${badgeClass}">${badgeText}</span>
