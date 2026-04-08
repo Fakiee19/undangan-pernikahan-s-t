@@ -37,8 +37,8 @@
   /* Jarak teks lebih rapat; border kartu lebih tipis/lega */
   --text-leading: 1.48;
   --content-border: 1px solid rgba(255, 255, 255, 0.26);
---ring-photo: 2px solid rgba(255, 255, 255, 0.48);
---scroll-duration: 1.2s;
+  --ring-photo: 2px solid rgba(255, 255, 255, 0.48);
+  --scroll-duration: 1.2s;
   --scroll-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
@@ -103,12 +103,6 @@ html {
   }
 }
 
-@media (max-width: 768px) {
-  body {
-    background-attachment: scroll;
-  }
-}
-
 body {
   margin: 0;
   font-family: var(--font-ui);
@@ -116,15 +110,24 @@ body {
   font-size: 1rem;
   line-height: var(--text-leading);
   color: var(--ink-soft);
-  background-image: url('images/bacground.webp');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
   background-color: var(--maroon-100);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background-image: url('images/bacground.webp');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 /* ===== Animated background ===== */
@@ -154,6 +157,7 @@ body {
   filter: blur(56px);
   opacity: 0.4;
   transform: translate3d(0, 0, 0);
+  will-change: transform;
   animation: float-orb 22s var(--ease-out-expo) infinite;
 }
 
@@ -661,6 +665,7 @@ body {
   opacity: 0;
   transform: translateY(40px) scale(0.96);
   filter: blur(12px);
+  will-change: transform, opacity, filter;
   transition:
     opacity 1.4s var(--ease-out-expo),
     transform 1.4s var(--ease-out-expo),
@@ -1104,7 +1109,7 @@ body {
 }
 
 .field span,
-  .field legend {
+.field legend {
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--ink);
@@ -1666,7 +1671,7 @@ body {
   font-weight: 700;
   margin-left: 0.3rem;
   flex-shrink: 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   vertical-align: middle;
   line-height: 1;
 }

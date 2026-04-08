@@ -54,16 +54,37 @@
   }
 
   var parallaxPairs = [];
+  var parallaxObserver;
+  if ('IntersectionObserver' in window) {
+    parallaxObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var idx = entry.target.getAttribute('data-plx-id');
+        if (idx !== null && parallaxPairs[idx]) {
+          parallaxPairs[idx].isVisible = entry.isIntersecting;
+        }
+      });
+    }, { rootMargin: "150px 0px" });
+  }
+
   function refreshParallaxPairs() {
     parallaxPairs = [];
     var heroImg = document.querySelector(".hero__figure .hero__photo");
-    if (heroImg) parallaxPairs.push({ img: heroImg, amp: 10 });
+    if (heroImg) parallaxPairs.push({ img: heroImg, box: heroImg.parentElement, amp: 10, isVisible: false });
     document.querySelectorAll(".person__photo").forEach(function (img) {
-      parallaxPairs.push({ img: img, amp: 8 });
+      parallaxPairs.push({ img: img, box: img.parentElement, amp: 8, isVisible: false });
     });
     document.querySelectorAll(".pg-item .pg-img").forEach(function (img) {
-      parallaxPairs.push({ img: img, amp: 12 });
+      parallaxPairs.push({ img: img, box: img.parentElement, amp: 12, isVisible: false });
     });
+
+    for (var i = 0; i < parallaxPairs.length; i++) {
+      var p = parallaxPairs[i];
+      if (p.box) {
+        p.box.setAttribute('data-plx-id', i);
+        if (parallaxObserver) parallaxObserver.observe(p.box);
+        else p.isVisible = true; // Fallback
+      }
+    }
   }
   refreshParallaxPairs();
 
@@ -71,15 +92,17 @@
     if (prefersReduced || !parallaxPairs.length) return;
     var vh = window.innerHeight || 1;
     var cy = vh * 0.5;
+    var updates = [];
     for (var i = 0; i < parallaxPairs.length; i++) {
       var p = parallaxPairs[i];
-      var box = p.img.parentElement;
-      if (!box) continue;
-      var r = box.getBoundingClientRect();
-      if (r.bottom < -100 || r.top > vh + 100) continue;
+      if (!p.box || !p.isVisible) continue;
+      var r = p.box.getBoundingClientRect();
       var mid = r.top + r.height * 0.5;
       var off = ((mid - cy) / vh) * p.amp;
-      p.img.style.transform = "translate3d(0," + off.toFixed(1) + "px,0) scale(1.05)";
+      updates.push({ img: p.img, off: off });
+    }
+    for (var j = 0; j < updates.length; j++) {
+      updates[j].img.style.transform = "translate3d(0," + updates[j].off.toFixed(1) + "px,0) scale(1.05)";
     }
   }
 
@@ -296,12 +319,12 @@
     function step(currentTime) {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
-      
+
       // iOS-like easing: cubic-bezier(0.25, 0.1, 0.25, 1)
       const ease = 1 - Math.pow(1 - progress, 3);
-      
+
       window.scrollTo(0, startY + distance * ease);
-      
+
       if (progress < 1) {
         requestAnimationFrame(step);
       }
@@ -494,7 +517,7 @@
       wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Memuat ucapan...</p>';
       const res = await fetch(GOOGLE_SCRIPT_URL);
       const rawData = await res.text();
-      
+
       let data;
       try {
         data = JSON.parse(rawData);
@@ -504,11 +527,11 @@
       }
 
       // Filter & sanitize data
-      wishesData = (Array.isArray(data) ? data : []).filter(wish => 
-        wish && (typeof wish.name === 'string' || typeof wish.name === 'number') && 
+      wishesData = (Array.isArray(data) ? data : []).filter(wish =>
+        wish && (typeof wish.name === 'string' || typeof wish.name === 'number') &&
         typeof wish.text === 'string'
       ).map(wish => ({
-        name: (function() {
+        name: (function () {
           let n = wish.name;
           if (typeof n === 'string') return n.trim().slice(0, 50);
           if (typeof n === 'number') return String(n).slice(0, 50);
@@ -518,8 +541,8 @@
         text: String(wish.text || '').trim().slice(0, 500),
         date: wish.date || new Date().toISOString().split('T')[0],
         attend: Boolean(wish.attend)
-      })); 
-      
+      }));
+
       wishesData.reverse();
 
       renderWishes();
