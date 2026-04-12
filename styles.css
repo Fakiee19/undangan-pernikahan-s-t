@@ -29,11 +29,11 @@
   --ease-spring: cubic-bezier(0.34, 1.2, 0.64, 1);
   --dur: 0.9s;
   --dock-h: 4.25rem;
-  /* Blur dikurangi sedikit agar backdrop-filter lebih ringan (tampilan tetap kaca) */
-  --glass-blur: 20px;
-  --glass-blur-strong: 28px;
-  --glass-saturate: 1.45;
-  --glass-saturate-strong: 1.42;
+  /* Blur dikurangi sangat signifikan agar performa mobile smooth 60fps */
+  --glass-blur: 6px;
+  --glass-blur-strong: 6px;
+  --glass-saturate: 1.1;
+  --glass-saturate-strong: 1.1;
   /* Jarak teks lebih rapat; border kartu lebih tipis/lega */
   --text-leading: 1.48;
   --content-border: 1px solid rgba(255, 255, 255, 0.26);
@@ -118,16 +118,18 @@ body {
 
 body::before {
   content: "";
-  position: fixed;
-  inset: 0;
+  position: absolute;
+  /* Ubah fixed menjadi absolute untuk menghindari hit berat saat scroll */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   z-index: -2;
   background-image: url('images/bacground.webp');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   pointer-events: none;
-  transform: translateZ(0);
-  will-change: transform;
 }
 
 /* ===== Animated background ===== */
@@ -154,7 +156,7 @@ body::before {
 .aurora__orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(56px);
+  filter: blur(20px);
   opacity: 0.4;
   transform: translate3d(0, 0, 0);
   will-change: transform;
@@ -664,23 +666,18 @@ body::before {
 .anim-on-scroll {
   opacity: 0;
   transform: translateY(40px) scale(0.96);
-  filter: blur(12px);
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
   transition:
     opacity 1.4s var(--ease-out-expo),
-    transform 1.4s var(--ease-out-expo),
-    filter 1.4s var(--ease-out-expo);
+    transform 1.4s var(--ease-out-expo);
 }
 
 .anim-on-scroll.is-visible {
   opacity: 1;
   transform: translateY(0) scale(1);
-  filter: blur(0);
 }
 
-.anim-on-scroll--delay-sm {
-  transition-delay: 0.15s;
-}
+/* Class anim-on-scroll--delay dihapus untuk performa */
 
 .anim-slide-left.anim-on-scroll {
   transform: translateX(-60px) translateY(20px) scale(0.97);
@@ -1813,4 +1810,23 @@ body::before {
   font-size: 5rem;
   margin-top: 0.2rem;
   font-weight: 600;
+}
+
+/* ===== Mobile Performace Optimizations ===== */
+@media (max-width: 768px) {
+  .aurora {
+    display: none !important;
+    /* Nonaktifkan aurora di mobile */
+  }
+
+  .glass,
+  .glass--strong,
+  .glass-pill-text,
+  .gate__mono,
+  .gate__portrait {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    /* Tambahkan fallback solid agar text tertutup rapi tanpa bayangan */
+  }
 }

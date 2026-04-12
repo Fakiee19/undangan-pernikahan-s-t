@@ -34,14 +34,11 @@
 
   function observeRevealables() {
     if (prefersReduced) return;
-    // Re-observe periodically for dynamic content (wishes)
     document.querySelectorAll(".anim-on-scroll:not(.is-visible)").forEach(function (el) {
       if (revealSeen.has(el)) return;
       revealSeen.add(el);
       scrollReveal.observe(el);
     });
-    // Re-run after short delay for new content
-    setTimeout(observeRevealables, 500);
   }
 
   function replayMainTextAnimations(root) {
@@ -69,17 +66,14 @@
   function refreshParallaxPairs() {
     parallaxPairs = [];
     var heroImg = document.querySelector(".hero__figure .hero__photo");
-    if (heroImg) parallaxPairs.push({ img: heroImg, box: heroImg.parentElement, amp: 10, isVisible: false });
-    document.querySelectorAll(".person__photo").forEach(function (img) {
-      parallaxPairs.push({ img: img, box: img.parentElement, amp: 8, isVisible: false });
-    });
-    document.querySelectorAll(".pg-item .pg-img").forEach(function (img) {
-      parallaxPairs.push({ img: img, box: img.parentElement, amp: 12, isVisible: false });
-    });
+    if (heroImg) parallaxPairs.push({ img: heroImg, box: heroImg.parentElement, amp: 10, isVisible: false, cachedTop: 0, cachedHeight: 0 });
 
     for (var i = 0; i < parallaxPairs.length; i++) {
       var p = parallaxPairs[i];
       if (p.box) {
+        var r = p.box.getBoundingClientRect();
+        p.cachedTop = r.top + window.scrollY;
+        p.cachedHeight = r.height;
         p.box.setAttribute('data-plx-id', i);
         if (parallaxObserver) parallaxObserver.observe(p.box);
         else p.isVisible = true; // Fallback
@@ -88,17 +82,24 @@
   }
   refreshParallaxPairs();
 
+  // Cache ulangi pendaftaran layout hanya saat window direfresh ukurannya
+  window.addEventListener('resize', function () {
+    clearTimeout(window.plxResizeTimer);
+    window.plxResizeTimer = setTimeout(refreshParallaxPairs, 250);
+  }, { passive: true });
+
   function updateParallax() {
-    if (prefersReduced || !parallaxPairs.length) return;
+    if (prefersReduced || !parallaxPairs.length || window.innerWidth <= 768) return; // Disable parallax at mobile view
     var vh = window.innerHeight || 1;
     var cy = vh * 0.5;
     var updates = [];
+    var scrollY = window.scrollY;
     for (var i = 0; i < parallaxPairs.length; i++) {
       var p = parallaxPairs[i];
       if (!p.box || !p.isVisible) continue;
-      var r = p.box.getBoundingClientRect();
-      var mid = r.top + r.height * 0.5;
-      var off = ((mid - cy) / vh) * p.amp;
+      // Menggunakan layout yg sudah di-cache dibanding getBoundingClientRect (mencegah Layout Thrashing)
+      var midLayout = p.cachedTop - scrollY + (p.cachedHeight * 0.5);
+      var off = ((midLayout - cy) / vh) * p.amp;
       updates.push({ img: p.img, off: off });
     }
     for (var j = 0; j < updates.length; j++) {
@@ -195,12 +196,8 @@
     musicBtn.addEventListener("click", toggleMusic);
   }
 
-  // Call auto play after DOM loaded
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initMusic);
-  } else {
-    initMusic();
-  }
+  // Call auto play disabled by default, user must interact via toggleMusic button
+  // initMusic calls removed from page load to avoid lag and autoplay blocking
 
   function showMainChrome() {
     if (iosDock) iosDock.hidden = false;
@@ -291,19 +288,43 @@
       if (node) dockById[sid] = node;
     });
 
-    pickDockActive = function () {
-      const y = window.scrollY + Math.min(160, window.innerHeight * 0.18);
-      let current = dockSections[0];
-      for (var d = 0; d < dockSections.length; d++) {
-        const sid = dockSections[d];
+    let dockCachedOffsets = [];
+    window.refreshDockOffsets = function () {
+      dockCachedOffsets = dockSections.map(function (sid) {
         const sec = dockById[sid];
-        if (!sec) continue;
-        const top = sec.getBoundingClientRect().top + window.scrollY;
-        if (y + 1 >= top) current = sid;
-      }
-      setDockActive(current);
+        return {
+          id: sid,
+          top: sec ? (sec.getBoundingClientRect().top + window.scrollY) : 0
+        };
+      });
     };
+
+    let currentActiveDock = null;
+    pickDockActive = function () {
+      if (!dockCachedOffsets.length) window.refreshDockOffsets();
+      const scrolled = window.scrollY;
+      const y = scrolled + Math.min(160, window.innerHeight * 0.18);
+      let current = dockSections[0];
+      for (var d = 0; d < dockCachedOffsets.length; d++) {
+        if (y + 1 >= dockCachedOffsets[d].top) current = dockCachedOffsets[d].id;
+      }
+
+      // Batch write classList hanya bila state berubah
+      if (currentActiveDock !== current) {
+        currentActiveDock = current;
+        setDockActive(current);
+      }
+    };
+    window.refreshDockOffsets();
     pickDockActive();
+
+    let resizeTimer;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () {
+        if (window.refreshDockOffsets) window.refreshDockOffsets();
+      }, 250);
+    }, { passive: true });
   }
 
   // Custom smooth scroll function for visible effect
