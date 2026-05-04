@@ -481,7 +481,7 @@
   // 1. Buat Spreadsheet Baru di Google Drive.
   // 2. Klik Extensions -> Apps Script. Paste kode dari file panduan.
   // 3. Deploy -> New Deployment -> Pilih Web App -> Anyone. Copy URL Deployment ke sini:
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzNL_NLMbomyk0xxYMF64WtYtONiqKvH-RnCpk9ZxVmywDrUkEApxup9mKH_mM-TjdO/exec";
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVZT9iwSS9mXUZAaTOzH75a5F6iGX3LWXqGnEmdv5iO18tP58iyiqEIR2gze3nVUT2/exec";
 
   let wishesData = [];
   const displayWishesCount = Infinity; // Show all messages, const since never changes
@@ -610,14 +610,16 @@
       }
 
       // Kirim ucapan ke Google Sheets API
-      if (GOOGLE_SCRIPT_URL && name && message) {
+      if (GOOGLE_SCRIPT_URL && name) {
         try {
-          // fetch dengan "text/plain" body mencegah eror CORS preflight
+          // mode: 'no-cors' mencegah CORS error di HP/mobile
           await fetch(GOOGLE_SCRIPT_URL, {
             method: "POST",
+            mode: "no-cors",
             body: JSON.stringify({
               name: name,
               attend: attend === "hadir",
+              guests: guests,
               message: message
             })
           });
