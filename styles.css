@@ -476,7 +476,7 @@ body::before {
   position: relative;
   z-index: 1;
   overflow-x: clip;
-  padding-bottom: calc(3rem + var(--dock-h) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   contain: layout style;
 }
 
