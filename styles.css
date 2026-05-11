@@ -525,8 +525,8 @@ body::before {
   bottom: 1.25rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 22%;
-  max-width: 80px;
+  width: 14%;
+  max-width: 52px;
   height: auto;
   z-index: 2;
   filter: drop-shadow(0 -4px 12px rgba(26, 12, 18, 0.45));
