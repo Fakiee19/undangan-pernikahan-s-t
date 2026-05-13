@@ -13,6 +13,7 @@
   const bgMusic = document.getElementById("bgMusic");
   const musicBtn = document.getElementById("musicBtn");
   let isMusicPlaying = false;
+  if (bgMusic) bgMusic.volume = 0.35;
 
   const prefersReduced =
     typeof window.matchMedia === "function" &&
@@ -22,8 +23,8 @@
   const revealSeen = new WeakSet();
   const scrollReveal = new IntersectionObserver(
     function (entries) {
-      for (var i = 0; i < entries.length; i++) {
-        var e = entries[i];
+      for (let i = 0; i < entries.length; i++) {
+        const e = entries[i];
         if (!e.isIntersecting) continue;
         e.target.classList.add("is-visible");
         scrollReveal.unobserve(e.target);
@@ -50,67 +51,79 @@
     });
   }
 
-  var parallaxPairs = [];
-  var parallaxObserver;
-  if ('IntersectionObserver' in window) {
-    parallaxObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var idx = entry.target.getAttribute('data-plx-id');
-        if (idx !== null && parallaxPairs[idx]) {
-          parallaxPairs[idx].isVisible = entry.isIntersecting;
-        }
-      });
-    }, { rootMargin: "150px 0px" });
+  let parallaxPairs = [];
+  let parallaxObserver;
+  if ("IntersectionObserver" in window) {
+    parallaxObserver = new IntersectionObserver(
+      function (entries) {
+        entries.forEach(function (entry) {
+          const idx = entry.target.getAttribute("data-plx-id");
+          if (idx !== null && parallaxPairs[idx]) {
+            parallaxPairs[idx].isVisible = entry.isIntersecting;
+          }
+        });
+      },
+      { rootMargin: "150px 0px" }
+    );
   }
 
   function refreshParallaxPairs() {
     parallaxPairs = [];
-    var heroImg = document.querySelector(".hero__figure .hero__photo");
-    if (heroImg) parallaxPairs.push({ img: heroImg, box: heroImg.parentElement, amp: 10, isVisible: false, cachedTop: 0, cachedHeight: 0 });
+    const heroImg = document.querySelector(".hero__figure .hero__photo");
+    if (heroImg) {
+      parallaxPairs.push({
+        img: heroImg,
+        box: heroImg.parentElement,
+        amp: 10,
+        isVisible: false,
+        cachedTop: 0,
+        cachedHeight: 0,
+      });
+    }
 
-    for (var i = 0; i < parallaxPairs.length; i++) {
-      var p = parallaxPairs[i];
+    for (let i = 0; i < parallaxPairs.length; i++) {
+      const p = parallaxPairs[i];
       if (p.box) {
-        var r = p.box.getBoundingClientRect();
+        const r = p.box.getBoundingClientRect();
         p.cachedTop = r.top + window.scrollY;
         p.cachedHeight = r.height;
-        p.box.setAttribute('data-plx-id', i);
+        p.box.setAttribute("data-plx-id", String(i));
         if (parallaxObserver) parallaxObserver.observe(p.box);
-        else p.isVisible = true; // Fallback
+        else p.isVisible = true;
       }
     }
   }
   refreshParallaxPairs();
 
-  // Cache ulangi pendaftaran layout hanya saat window direfresh ukurannya
-  window.addEventListener('resize', function () {
-    clearTimeout(window.plxResizeTimer);
-    window.plxResizeTimer = setTimeout(refreshParallaxPairs, 250);
-  }, { passive: true });
+  window.addEventListener(
+    "resize",
+    function () {
+      clearTimeout(window.plxResizeTimer);
+      window.plxResizeTimer = setTimeout(refreshParallaxPairs, 250);
+    },
+    { passive: true }
+  );
 
   function updateParallax() {
-    if (prefersReduced || !parallaxPairs.length || window.innerWidth <= 768) return; // Disable parallax at mobile view
-    var vh = window.innerHeight || 1;
-    var cy = vh * 0.5;
-    var updates = [];
-    var scrollY = window.scrollY;
-    for (var i = 0; i < parallaxPairs.length; i++) {
-      var p = parallaxPairs[i];
+    if (prefersReduced || !parallaxPairs.length || window.innerWidth <= 768) return;
+    const vh = window.innerHeight || 1;
+    const cy = vh * 0.5;
+    const updates = [];
+    const scrollY = window.scrollY;
+    for (let i = 0; i < parallaxPairs.length; i++) {
+      const p = parallaxPairs[i];
       if (!p.box || !p.isVisible) continue;
-      // Menggunakan layout yg sudah di-cache dibanding getBoundingClientRect (mencegah Layout Thrashing)
-      var midLayout = p.cachedTop - scrollY + (p.cachedHeight * 0.5);
-      var off = ((midLayout - cy) / vh) * p.amp;
+      const midLayout = p.cachedTop - scrollY + p.cachedHeight * 0.5;
+      const off = ((midLayout - cy) / vh) * p.amp;
       updates.push({ img: p.img, off: off });
     }
-    for (var j = 0; j < updates.length; j++) {
-      updates[j].img.style.transform = "translate3d(0," + updates[j].off.toFixed(1) + "px,0) scale(1.05)";
+    for (let j = 0; j < updates.length; j++) {
+      updates[j].img.style.transform =
+        "translate3d(0," + updates[j].off.toFixed(1) + "px,0) scale(1.05)";
     }
   }
 
-  // ========================================================
-  // Ambil Nama Tamu dari URL
-  // ========================================================
-  // Ambil nama dari URL (contoh: web.com/?to=Nama+Tamu)
+  /** Nama tamu dari query URL, mis. ?to=Nama+Tamu */
   function getGuestNameFromUrl() {
     try {
       const p = new URLSearchParams(window.location.search);
@@ -134,8 +147,8 @@
     }
   }
 
-  // Inisialisasi data tamu
   const guestName = getGuestNameFromUrl();
+  // Inisialisasi data tamu
   if (guestName) {
     applyGuestLine(guestName);
   }
@@ -144,7 +157,7 @@
   document.querySelectorAll("img.js-photo").forEach(function (img) {
     img.addEventListener("error", function onImgErr() {
       img.removeEventListener("error", onImgErr);
-      var srcAttr = img.getAttribute("src") || "";
+      const srcAttr = img.getAttribute("src") || "";
       if (srcAttr.indexOf("placeholder.svg") !== -1) return;
       img.src = PLACEHOLDER_SRC;
     });
@@ -164,18 +177,6 @@
     }, 2400);
   }
 
-  // Auto play music on load
-  function initMusic() {
-    if (!bgMusic) return;
-    bgMusic.volume = 0.35; // Lower volume for auto play
-    bgMusic.play().then(function () {
-      isMusicPlaying = true;
-      if (musicBtn) musicBtn.classList.remove("is-muted");
-    }).catch(function (e) {
-      console.warn("Auto play blocked by browser:", e);
-    });
-  }
-
   function toggleMusic() {
     if (!bgMusic) return;
     if (isMusicPlaying) {
@@ -183,21 +184,21 @@
       isMusicPlaying = false;
       if (musicBtn) musicBtn.classList.add("is-muted");
     } else {
-      bgMusic.play().then(function () {
-        isMusicPlaying = true;
-        if (musicBtn) musicBtn.classList.remove("is-muted");
-      }).catch(function (e) {
-        console.warn("Audio play blocked.", e);
-      });
+      bgMusic
+        .play()
+        .then(function () {
+          isMusicPlaying = true;
+          if (musicBtn) musicBtn.classList.remove("is-muted");
+        })
+        .catch(function (e) {
+          console.warn("Audio play blocked.", e);
+        });
     }
   }
 
   if (musicBtn) {
     musicBtn.addEventListener("click", toggleMusic);
   }
-
-  // Call auto play disabled by default, user must interact via toggleMusic button
-  // initMusic calls removed from page load to avoid lag and autoplay blocking
 
   function showMainChrome() {
     if (iosDock) iosDock.hidden = false;
@@ -256,9 +257,6 @@
     observeRevealables();
   }
 
-  // Scroll effects fully enabled
-  // No disabling - observer handles reveals, WeakSet prevents repeats
-
   /* Dock + satu listener scroll untuk parallax & tab aktif */
   const dockSections = ["beranda", "galeri", "mempelai", "cerita", "acara", "rsvp"];
   function setDockActive(id) {
@@ -267,8 +265,8 @@
     });
   }
 
-  var dockById = {};
-  var pickDockActive = null;
+  let dockById = {};
+  let pickDockActive = null;
   if (iosDock) {
     iosDock.querySelectorAll('a[href^="#"]').forEach(function (link) {
       link.addEventListener("click", function (e) {
@@ -305,7 +303,7 @@
       const scrolled = window.scrollY;
       const y = scrolled + Math.min(160, window.innerHeight * 0.18);
       let current = dockSections[0];
-      for (var d = 0; d < dockCachedOffsets.length; d++) {
+      for (let d = 0; d < dockCachedOffsets.length; d++) {
         if (y + 1 >= dockCachedOffsets[d].top) current = dockCachedOffsets[d].id;
       }
 
@@ -319,15 +317,18 @@
     pickDockActive();
 
     let resizeTimer;
-    window.addEventListener('resize', function () {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function () {
-        if (window.refreshDockOffsets) window.refreshDockOffsets();
-      }, 250);
-    }, { passive: true });
+    window.addEventListener(
+      "resize",
+      function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function () {
+          if (window.refreshDockOffsets) window.refreshDockOffsets();
+        }, 250);
+      },
+      { passive: true }
+    );
   }
 
-  // Custom smooth scroll function for visible effect
   function smoothScrollTo(targetY, duration) {
     if (duration <= 0) {
       window.scrollTo(0, targetY);
@@ -353,7 +354,7 @@
     requestAnimationFrame(step);
   }
 
-  var scrollRaf = false;
+  let scrollRaf = false;
   function onWindowScroll() {
     if (scrollRaf) return;
     scrollRaf = true;
@@ -456,9 +457,9 @@
 
   document.querySelectorAll(".js-lightbox-trigger").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      var im = btn.querySelector("img");
+      const im = btn.querySelector("img");
       if (!im) return;
-      var src = im.currentSrc || im.src || "";
+      const src = im.currentSrc || im.src || "";
       openPhotoLightbox(src, (im.getAttribute("alt") || "").trim());
     });
   });
@@ -473,69 +474,92 @@
     });
   }
 
-  // ========================================================
-  // Fitur Ucapan & Doa
-  // ========================================================
+  /** Ucapan & doa (Google Apps Script) */
   const wishesListEl = document.getElementById("wishesList");
-
-  // 1. Buat Spreadsheet Baru di Google Drive.
-  // 2. Klik Extensions -> Apps Script. Paste kode dari file panduan.
-  // 3. Deploy -> New Deployment -> Pilih Web App -> Anyone. Copy URL Deployment ke sini:
   const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzVZT9iwSS9mXUZAaTOzH75a5F6iGX3LWXqGnEmdv5iO18tP58iyiqEIR2gze3nVUT2/exec";
 
+  const MONTHS_ID = [
+    "Januari",
+    "Februari",
+    "Maret",
+    "April",
+    "Mei",
+    "Juni",
+    "Juli",
+    "Agustus",
+    "September",
+    "Oktober",
+    "November",
+    "Desember",
+  ];
+
   let wishesData = [];
-  const displayWishesCount = Infinity; // Show all messages, const since never changes
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
 
   function formatIndoDate(dateStr) {
     if (!dateStr) return "";
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-    return d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+    return d.getDate() + " " + MONTHS_ID[d.getMonth()] + " " + d.getFullYear();
   }
 
   function renderWishes() {
     if (!wishesListEl) return;
     wishesListEl.innerHTML = "";
 
-    // Menampilkan dari atas sesuai batas load
-    const toRender = wishesData.slice(0, displayWishesCount);
-
-    // Jika tidak ada ucapan, beri teks kosong
     if (wishesData.length === 0) {
-      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6;">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
+      wishesListEl.innerHTML =
+        '<p class="wishes-list__hint">Belum ada ucapan. Jadilah yang pertama memberikan doa!</p>';
       return;
     }
 
-    toRender.forEach((wish, index) => {
+    wishesData.forEach(function (wish) {
       const card = document.createElement("div");
       card.className = "wish-card glass";
 
       const badgeClass = wish.attend ? "wish-card__badge" : "wish-card__badge wish-card__badge--dim";
       const badgeText = wish.attend ? "Hadir" : "Tidak Hadir";
 
-      card.innerHTML = `
-        <div class="wish-card__header">
-          <div>
-            <h3 class="wish-card__name">${wish.name} <span class="wish-card__blue-badge">✓</span></h3>
-            <p class="wish-card__date">${formatIndoDate(wish.date)}</p>
-          </div>
-          <span class="${badgeClass}">${badgeText}</span>
-        </div>
-        <p class="wish-card__text">${wish.text}</p>
-      `;
+      card.innerHTML =
+        '<div class="wish-card__header">' +
+        "<div>" +
+        '<h3 class="wish-card__name">' +
+        escapeHtml(wish.name) +
+        ' <span class="wish-card__blue-badge">✓</span></h3>' +
+        '<p class="wish-card__date">' +
+        escapeHtml(formatIndoDate(wish.date)) +
+        "</p>" +
+        "</div>" +
+        '<span class="' +
+        badgeClass +
+        '">' +
+        badgeText +
+        "</span>" +
+        "</div>" +
+        '<p class="wish-card__text">' +
+        escapeHtml(wish.text).replace(/\n/g, "<br>") +
+        "</p>";
       wishesListEl.appendChild(card);
     });
-
   }
 
   async function fetchWishes() {
+    if (!wishesListEl) return;
     if (!GOOGLE_SCRIPT_URL) {
-      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Tautan Google Script belum diatur di script.js.</p>';
+      wishesListEl.innerHTML =
+        '<p class="wishes-list__hint wishes-list__hint--padded">Tautan Google Script belum diatur di script.js.</p>';
       return;
     }
     try {
-      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Memuat ucapan...</p>';
+      wishesListEl.innerHTML =
+        '<p class="wishes-list__hint wishes-list__hint--padded">Memuat ucapan...</p>';
       const res = await fetch(GOOGLE_SCRIPT_URL);
       const rawData = await res.text();
 
@@ -543,48 +567,55 @@
       try {
         data = JSON.parse(rawData);
       } catch (parseErr) {
-        console.error('JSON parse error:', parseErr.message, '- Raw:', rawData.slice(0, 200));
+        console.error("JSON parse error:", parseErr.message, "- Raw:", rawData.slice(0, 200));
         data = [];
       }
 
-      // Filter & sanitize data
-      wishesData = (Array.isArray(data) ? data : []).filter(wish =>
-        wish && (typeof wish.name === 'string' || typeof wish.name === 'number') &&
-        typeof wish.text === 'string'
-      ).map(wish => ({
-        name: (function () {
-          let n = wish.name;
-          if (typeof n === 'string') return n.trim().slice(0, 50);
-          if (typeof n === 'number') return String(n).slice(0, 50);
-          if (n instanceof Date || /T[0-9]{2}:[0-9]{2}/.test(String(n))) return 'Tamu';
-          return 'Tamu';
-        })(),
-        text: String(wish.text || '').trim().slice(0, 500),
-        date: wish.date || new Date().toISOString().split('T')[0],
-        attend: Boolean(wish.attend)
-      }));
+      wishesData = (Array.isArray(data) ? data : [])
+        .filter(function (wish) {
+          return (
+            wish &&
+            (typeof wish.name === "string" || typeof wish.name === "number") &&
+            typeof wish.text === "string"
+          );
+        })
+        .map(function (wish) {
+          return {
+            name: (function () {
+              const n = wish.name;
+              if (typeof n === "string") return n.trim().slice(0, 50);
+              if (typeof n === "number") return String(n).slice(0, 50);
+              if (n instanceof Date || /T[0-9]{2}:[0-9]{2}/.test(String(n))) return "Tamu";
+              return "Tamu";
+            })(),
+            text: String(wish.text || "")
+              .trim()
+              .slice(0, 500),
+            date: wish.date || new Date().toISOString().split("T")[0],
+            attend: Boolean(wish.attend),
+          };
+        });
 
       wishesData.reverse();
 
       renderWishes();
     } catch (e) {
       console.error("Gagal mengambil ucapan:", e);
-      wishesListEl.innerHTML = '<p style="text-align:center; font-size:0.9rem; opacity:0.6; margin-top:2rem;">Gagal memuat ucapan dari server. Silakan muat ulang.</p>';
+      wishesListEl.innerHTML =
+        '<p class="wishes-list__hint wishes-list__hint--padded">Gagal memuat ucapan dari server. Silakan muat ulang.</p>';
     }
   }
 
-  // Event listener for "Lebih Banyak" button removed as all wishes now show by default
-
-  // Panggil data awal dari server Google Sheets
   fetchWishes();
 
   /* Ganti nomor WhatsApp di bawah sebelum dipakai */
-  const WA_NUMBER = "6287710549498";
+  const WA_NUMBER = "6285143247146";
   if (rsvpForm) {
     rsvpForm.addEventListener("submit", async function (e) {
       e.preventDefault();
 
       const submitBtn = rsvpForm.querySelector('button[type="submit"]');
+      if (!submitBtn) return;
       const originalBtnText = submitBtn.innerHTML;
       submitBtn.innerHTML = "<span>Menyimpan...</span>";
       submitBtn.disabled = true;
@@ -626,16 +657,15 @@
 
           // Munculkan di layer lokal biar terasa cepat tanpa reload
           const d = new Date();
-          const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-          const dateStr = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+          const dateStr =
+            d.getDate() + " " + MONTHS_ID[d.getMonth()] + " " + d.getFullYear();
           wishesData.unshift({
             name: name,
             text: message,
             date: dateStr,
-            attend: attend === "hadir"
+            attend: attend === "hadir",
           });
 
-          // No need to adjust displayWishesCount - always shows all
           renderWishes();
           showToast("Ucapan tersimpan!");
 
@@ -653,7 +683,7 @@
 
       const url = "https://wa.me/" + WA_NUMBER + "?text=" + text;
       // Beri sedikit jeda agar toast sempat muncul sebelum pindah ke WA
-      setTimeout(() => {
+      setTimeout(function () {
         window.open(url, "_blank", "noopener,noreferrer");
       }, 500);
     });
